@@ -1,0 +1,12 @@
+#!/usr/bin/env node
+
+var fs = require('fs')
+
+if (fs.existsSync('./config.js')){
+  console.error("config.js already exists - delete it if you want to" +
+                " start configuring again")
+
+  process.exit(1);
+}
+
+fs.writeFileSync('./config.js', fs.readFileSync('./config.js.sample'));
