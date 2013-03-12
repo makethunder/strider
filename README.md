@@ -65,7 +65,7 @@ when they will make it available to the general public.
     `heroku login`
 - Create a new Heroku app w/ custom buildpack (enables native NPM modules to be built) for Strider:
     `heroku create --stack cedar --buildpack https://github.com/Strider-CD/heroku-buildpack-nodejs`
-- Edit `config.js` and set the following values:
+- copy `config.js.sample` to  `config.js` and set the following values:
   - Server name. Address at which server will be accessible on the Internet. E.g. https://mystrider.herokuapp.com/
   - Github app id & secret for your Heroku app - you can register a new one 
   at https://github.com/settings/applications/new - the Main URL should be the same as server name above,
@@ -163,11 +163,11 @@ Configuring
 ===========
 
 
-`Strider` configuration is stored in the `config.js` file. Most of the default
+`Strider` configuration is stored in the `config.js` file, which you can copy from `config.js.sample`. Most of the default
 values should work fine for running on localhost, however for an
 Internet-accessible deployment the following values will need to be configured:
 
-- In `config.js` file you'll need to set:
+- Copy `config.js.sample to  `config.js`, then you'll need to set:
 
   - MongoDB DB URI if not localhost (you can safely use MongoLab free plan - works great)
   - Server name. Address at which server will be accessible on the Internet. E.g. https://strider.example.com/
