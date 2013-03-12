@@ -105,8 +105,8 @@ $ heroku create --stack cedar --buildpack https://github.com/Strider-CD/heroku-b
 Creating intense-reef-4414... done, stack is cedar
 http://intense-reef-4414.herokuapp.com/ | git@heroku.com:intense-reef-4414.git
 Git remote heroku added
+$ cp config.js.sample config.js
 $ vim config.js
-$ commit -m'add my config' config.js
 $ heroku addons:add mongolab:starter
 Adding mongolab:starter on intense-reef-4414... done, v2 (free)
 Welcome to MongoLab.
@@ -167,7 +167,7 @@ Configuring
 values should work fine for running on localhost, however for an
 Internet-accessible deployment the following values will need to be configured:
 
-- Copy `config.js.sample to  `config.js`, then you'll need to set:
+- Copy `config.js.sample` to  `config.js`, then you'll need to set:
 
   - MongoDB DB URI if not localhost (you can safely use MongoLab free plan - works great)
   - Server name. Address at which server will be accessible on the Internet. E.g. https://strider.example.com/
