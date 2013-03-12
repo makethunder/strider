@@ -1,7 +1,6 @@
 var app = require('./lib/app'),
     backchannel = require('./lib/backchannel'),
     common = require('./lib/common'),
-    config = require('./config'),
     loader = require('strider-extension-loader'),
     middleware = require('./lib/middleware'),
     models = require('./lib/models'),
@@ -11,6 +10,16 @@ var app = require('./lib/app'),
 common.workerMessageHooks = [];
 common.workerMessagePostProcessors = [];
 common.panels = {};
+
+try {
+  var config = require('./config');
+} catch (e){
+  if (e.code == 'MODULE_NOT_FOUND'){
+    console.error("'config.js' was not found - did you forget to copy 'config.js.sample' ? \n $ cp config.js.sample config.js");
+    process.exit(1);
+  }
+}
+
 
 //
 // ### Register panel

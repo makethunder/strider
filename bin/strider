@@ -1,9 +1,17 @@
 #!/usr/bin/env node
 
+try {
+  var config = require('../config');
+} catch (e){
+  if (e.code == 'MODULE_NOT_FOUND'){
+    console.error("'config.js' was not found - did you forget to copy 'config.js.sample' ? \n $ cp config.js.sample config.js");
+    process.exit(1);
+  }
+}
+
 var argv = require('optimist')
       .usage('Strider Continuous Deployment CLI\nUsage: $0 [options]')
       .argv,
-    config = require('../config'),
     everypaas = require('everypaas'),
     mongoose = require('mongoose'),
     pw = require('pw'),
