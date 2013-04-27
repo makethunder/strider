@@ -2,110 +2,156 @@
 
 {% block bodyContent %}
 <script data-main="/apres/js/lib/apres-dev.js" src="/apres/js/lib/require-1.0.8.js"></script>
-<div id="remove-github-webhooks-modal" class="modal fade"></div>
+<script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js" ></script>
 {% include "projects_config_templates.html" %}
 
-<div class="span12">
-  <h3>Configuration - <font class="header-emphasis">{{display_name}}</font></h3>
-  <p>
-    <div class="tabbable tabs-left">
-      <ul class="nav nav-tabs">
-        <li class="active"><a href="#collaborators" data-toggle="tab">Collaborators</a></li>
-        <li><a href="#heroku" data-toggle="tab">Heroku Config</a></li>
+<style>
+
+.strider-config .nav{
+  border-right:1px solid #999;
+}
+.strider-config .nav ul, .strider-config ol{
+  margin:0;
+  padding:0;
+}
+.strider-config .nav li{
+  list-style:none;
+  padding:0.5em;
+  margin:1px;
+  border:1px solid #eee;
+  border-radius:1em 0 0 1em;
+  border-right:none;
+
+}
+.strider-config .sortable li{
+  background:url('/images/draggable.png') no-repeat right;
+}
+</style>
+<script>
+$(function(){
+  $('.sortable').sortable();
+})
+</script>
+
+<div class="strider-config span12">
+  <ul class='breadcrumb'>
+    <li><a href = "/">Repositories</a><span class='divider'>/</span></li>
+    <li><a href = "">{{display_name }}</a><span class='divider'>/</span></li>
+    <li class='active'>Configuration</li>
+  </ul>
+
+  <div class="tabbable tabs-left row">
+    <div class='nav span2'>
+      <h4>Repo Setup</h4>
+      <ul class=''>
         <li><a href="#github_config" data-toggle="tab">Github Config</a></li>
         <li><a href="#webhooks" data-toggle="tab">Webhooks</a></li>
+        <li><a href="#collaborators" data-toggle="tab">Collaborators</a></li>
         <li><a href="#deactivate" data-toggle="tab">Deactivate</a></li>
-        {% for panel in panels %}
-        <li><a href="#{{panel.id}}" data-toggle="tab">{{panel.title}}</a></li>
-        {% endfor %}
+        <li><a href="#heroku" data-toggle="tab">Heroku Config</a></li>
       </ul>
-      <div class="tab-content">
-        <!--each panel in panels-->
-        <!--  div(id="#{panel.id}").tab-pane-->
-        <!--   !{panel.contents}-->
+
+      <br style='clear:both' />
+
+      <h4>Plugins</h4>
+      <ol class="sortable">
+    
         {% for panel in panels %}
-        <div id="{{panel.id}}" class="tab-pane">
-        {% autoescape false %}
-        {{panel.contents}}
-        {% endautoescape %}
-        </div>
+        <li>
+          <input type='checkbox' />
+          <a href="#{{panel.id}}" data-toggle="tab">{{panel.title}}</a>
+        </li>
         {% endfor %}
-        <div id="collaborators" class="tab-pane active">
-          <div id="project_config_collaborators" data-widget="/javascripts/apres/widget/collaborators.js" class="widget span8">
-            <div class="well">
-              <fieldset>
-                <legend>Collaborators</legend>
-                <div class="alert alert-success hide"></div>
-                <p>Collaborators will be notified of build success/failure, be able to trigger test jobs and deploys, and access job details. They will not be permitted to add other new collaborators nor change any project configuration.</p>
-                <div class="row">
-                  <div class="span4">
-                    <table class="table"></table>
-                  </div>
-                  <div class="span3">
-                    <div class="control-group">
-                      <div class="controls">
-                        <div class="input-append">
-                          <input type="text" name="new_collaborator" placeholder="email address" class="collab-email span2"/>
-                          <button class="btn btn-add-collab">Add</button>
-                        </div>
+      </ol>
+      <a href = "#"><span class='icon-plus'></span> Add a plugin</a>
+    </div>
+
+    <div class="tab-content">
+      <!--each panel in panels-->
+      <!--  div(id="#{panel.id}").tab-pane-->
+      <!--   !{panel.contents}-->
+      {% for panel in panels %}
+      <div id="{{panel.id}}" class="tab-pane">
+      {% autoescape false %}
+      {{panel.contents}}
+      {% endautoescape %}
+      </div>
+      {% endfor %}
+      <div id="collaborators" class="tab-pane active">
+        <div id="project_config_collaborators" data-widget="/javascripts/apres/widget/collaborators.js" class="widget span8">
+          <div class="well">
+            <fieldset>
+              <legend>Collaborators</legend>
+              <div class="alert alert-success hide"></div>
+              <p>Collaborators will be notified of build success/failure, be able to trigger test jobs and deploys, and access job details. They will not be permitted to add other new collaborators nor change any project configuration.</p>
+              <div class="row">
+                <div class="span4">
+                  <table class="table"></table>
+                </div>
+                <div class="span3">
+                  <div class="control-group">
+                    <div class="controls">
+                      <div class="input-append">
+                        <input type="text" name="new_collaborator" placeholder="email address" class="collab-email span2"/>
+                        <button class="btn btn-add-collab">Add</button>
                       </div>
                     </div>
                   </div>
                 </div>
-              </fieldset>
-            </div>
+              </div>
+            </fieldset>
           </div>
-        </div>
-        <div id="github_config" class="tab-pane">
-          <div class="row-fluid">
-            <div class="span10">
-              <h3>Github Settings</h3>
-              <p></p>
-              <hr/><strong>Remove Github Webhooks</strong>
-              <p>If you ONLY want to kickoff tests manually via the Strider web interface, Strider can remove the webhook from Github. This will mean Strider is never notified of any commits you make. If you change your mind later, we can always add them back for you from this page.</p>
-              <div class="actions"><a id="remove-github-webhooks" class="btn btn-danger">Remove Github Webhooks</a></div>
-            </div>
-          </div>
-        </div>
-        <div id="heroku" class="tab-pane">
-          <div class="span8">
-            <div class="alert alert-success hide"></div>
-            <div class="content"></div>
-          </div>
-        </div>
-        <div id="webhooks" class="tab-pane">
-          <div id="project_config_webhooks" data-widget="/javascripts/apres/widget/webhooks.js" class="widget span10">
-            <div class="well">
-              <fieldset>
-                <legend>Webhooks</legend>
-                <div class="alert alert-success hide"></div>
-                <p>Target URLs will receive a HTTP POST from Strider with a JSON payload on each project test run.  These enable you to receive and process real-time push notifications from our system.  Push notifications are signed cryptographically with HMAC-SHA1 using a shared secret so you can verify their authenticity. Signatures are transmitted in the <a href="http://pubsubhubbub.googlecode.com/svn/trunk/pubsubhubbub-core-0.3.html#authednotify">X-Signature-Hub header. </a><a href="https://gist.github.com/3029840">See a sample payload.</a></p>
-                <div class="row">
-                  <div class="span6">
-                    <table class="table"></table>
-                  </div>
-                  <div class="span2">
-                    <div class="control-group">
-                      <div class="controls">
-                        <div class="input-append">
-                          <input type="text" placeholder="target URL" class="webhook-target-url span2"/>
-                          <input type="text" placeholder="HMAC-SHA1 secret" class="webhook-secret span2"/>
-                        </div>
-                        <button class="btn btn-add-webhook">Add</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </fieldset>
-            </div>
-          </div>
-        </div>
-        <div id="deactivate" class="tab-pane">
-          <div id="project_config_deactivate" data-widget="/javascripts/apres/widget/deactivate.js" class="widget span8"></div>
         </div>
       </div>
+      <div id="github_config" class="tab-pane">
+        <div class="row-fluid">
+          <div class="span10">
+            <h3>Github Settings</h3>
+            <p></p>
+            <hr/><strong>Remove Github Webhooks</strong>
+            <p>If you ONLY want to kickoff tests manually via the Strider web interface, Strider can remove the webhook from Github. This will mean Strider is never notified of any commits you make. If you change your mind later, we can always add them back for you from this page.</p>
+            <div class="actions"><a id="remove-github-webhooks" class="btn btn-danger">Remove Github Webhooks</a></div>
+          </div>
+        </div>
+      </div>
+      <div id="heroku" class="tab-pane">
+        <div class="span8">
+          <div class="alert alert-success hide"></div>
+          <div class="content"></div>
+        </div>
+      </div>
+      <div id="webhooks" class="tab-pane">
+        <div id="project_config_webhooks" data-widget="/javascripts/apres/widget/webhooks.js" class="widget span10">
+          <div class="well">
+            <fieldset>
+              <legend>Webhooks</legend>
+              <div class="alert alert-success hide"></div>
+              <p>Target URLs will receive a HTTP POST from Strider with a JSON payload on each project test run.  These enable you to receive and process real-time push notifications from our system.  Push notifications are signed cryptographically with HMAC-SHA1 using a shared secret so you can verify their authenticity. Signatures are transmitted in the <a href="http://pubsubhubbub.googlecode.com/svn/trunk/pubsubhubbub-core-0.3.html#authednotify">X-Signature-Hub header. </a><a href="https://gist.github.com/3029840">See a sample payload.</a></p>
+              <div class="row">
+                <div class="span6">
+                  <table class="table"></table>
+                </div>
+                <div class="span2">
+                  <div class="control-group">
+                    <div class="controls">
+                      <div class="input-append">
+                        <input type="text" placeholder="target URL" class="webhook-target-url span2"/>
+                        <input type="text" placeholder="HMAC-SHA1 secret" class="webhook-secret span2"/>
+                      </div>
+                      <button class="btn btn-add-webhook">Add</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+          </div>
+        </div>
+      </div>
+      <div id="deactivate" class="tab-pane">
+        <div id="project_config_deactivate" data-widget="/javascripts/apres/widget/deactivate.js" class="widget span8"></div>
+      </div>
     </div>
-  </p>
+  </div>
 </div>
 <script type="text/template" id="github-setup" class="template">
   <!--Empty-->
