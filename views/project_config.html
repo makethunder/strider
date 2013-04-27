@@ -23,8 +23,17 @@
   border-right:none;
 
 }
+.strider-config .nav h4{
+  text-align:center;
+}
 .strider-config .sortable li{
   background:url('/images/draggable.png') no-repeat right;
+}
+
+.strider-config .add-plugin{
+  color:#449;
+  text-align:center;
+  display:block;
 }
 </style>
 <script>
@@ -53,7 +62,8 @@ $(function(){
 
       <br style='clear:both' />
 
-      <h4>Plugins</h4>
+      <h4>Plugins 
+        <abbr title="Plugins specify how tests and deploys are run - you can enable and disable them per project, and reorder them so they can depend on each other">(?)</abbr></h4>
       <ol class="sortable">
     
         {% for panel in panels %}
@@ -63,7 +73,7 @@ $(function(){
         </li>
         {% endfor %}
       </ol>
-      <a href = "#"><span class='icon-plus'></span> Add a plugin</a>
+      <a class='add-plugin' href = "#"><span class='icon-plus'></span> Add a plugin</a>
     </div>
 
     <div class="tab-content">
