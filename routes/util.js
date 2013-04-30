@@ -1,9 +1,11 @@
 var async = require('async')
   , fs = require('fs')
+  , common = require('../lib/common')
+  , _ = require('underscore')
 
 exports.getRepo = function(req){
   return function(){
-    var url = req.repo_url
+    var url = req.repo_url || req.param("repo") || req.param("url");
     return req.user.get_repo_config(url, this);
   }
 }
@@ -11,7 +13,21 @@ exports.getRepo = function(req){
 exports.error = function(ctx, msg, res){
   console.error(ctx, msg);
   res.statusCode = 400;
-  return res.end("Bad Request");
+  var r = {
+    errors: [msg],
+    status: "error"
+  };
+  return res.end(JSON.stringify(r, null, '\t'));
+}
+
+exports.ok = function(results, res){
+  var r = {
+    errors: [],
+    status: "ok",
+    results: results
+  }
+  res.statusCode = 200;
+  return res.end(JSON.stringify(r, null, '\t'));
 }
 
 
@@ -35,4 +51,29 @@ exports.loadPluginPanels = function(plugins, cb){
   if (!plugins)
     return cb(null, []);
   async.map(plugins, loadPluginPanel, cb)
+}
+
+
+exports.getPanelsForRepo = function(repo){
+  var panels = common.panels['project_config']
+    , out = []
+  
+  repo.plugins.forEach(function(id){
+    for (var i = 0; i<panels.length; i++){
+      if (panels[i].id == id){
+        panels[i].enabled = true; //TODO
+        out.push(panels.splice(i, 1))
+        return; 
+      }
+    }
+    throw "Plugin not found:" + id
+  })
+
+  out = out.concat(panels);
+  return out
+
+}
+
+exports.availablePlugins = function(){
+  return _.pluck(common.panels['project_config'], 'id');
 }

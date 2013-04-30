@@ -11,6 +11,7 @@ var _ = require('underscore')
   , User = require(BASE_PATH + 'models').User
   , Job = require(BASE_PATH + 'models').Job
   , Step = require('step')
+  , r = require('../util')
   ;
 
 /*
@@ -191,43 +192,20 @@ exports.delete_index = function(req, res) {
 };
 
 
-var error = function(ctx, err_msg, res){
-  console.error(ctx, err_msg);
-  var r = {
-    errors: [err_msg],
-    status: "error"
-  };
-  res.statusCode = 400;
-  return res.end(JSON.stringify(r, null, '\t'));
-}
-
-var ok = function(results, res){
-  var r = {
-    errors: [],
-    status: "ok",
-    results: results
-  }
-  res.statusCode = 200;
-  return res.end(JSON.stringify(r, null, '\t'));
-}
 
 
-var getRepo = function(req, url){
-  return function(){
-    req.user.get_repo_config(url, this);
-  }
-}
 
 exports.getPlugins = function(req, res, next){
   var url = req.param("repo");
 
-  Step(getRepo(req, url),
+  Step(r.getRepo(req),
     function(err, repo, access, owner) {
       if (err) 
-        return error("Plugins.get"
+        return r.error("Plugins.get"
           , "Repo Err: " + url + ": " + err, res);
-
-      return ok(repo.plugins, res);
+      
+      console.log("!!", repo.plugins);
+      return r.ok(repo.plugins, res);
     });
 }
 
@@ -235,20 +213,39 @@ exports.postPlugins = function(req, res, next){
   var url = req.param("repo")
     , plugins = req.param("plugins");
 
-  Step(getRepo,
+  Step(r.getRepo(req),
     function(err, repo, access, owner) {
       if (err) 
-        return error("Plugins.get"
+        return r.error("Plugins.post"
           , "Repo Err: " + url + ": " + err, res);
 
       // Check each plugin exists...
+      if (!Array.isArray(plugins)){
+        return r.error("Plugins.post", "Plugins is not a list", res);
+      }
+    
+      var availablePlugins = r.availablePlugins()
       
+      for (var i = 0 ; i<plugins.length; i++){
+        if (!plugins[i].id){
+          return r.error ("Plugins.post", "Bad plugin" + plugins[i], res);
+        }
+        console.log("!!!!!", availablePlugins, plugins[i].id)
+        if (availablePlugins.indexOf(plugins[i].id) < 0){
+          return r.error("Plugins.post", "Plugin not installed: " + plugins[i].id, res);
+        }
+
+        var _o = plugins[i];
+        plugins[i] = {id: _o.id, enabled: _o.enabled}
+      }
+
       repo.plugins = plugins;
+      console.log("!!!!!", repo.plugins)
       repo.save(this);
     }
    , function(err){ 
-     if (err) return error("Plugins.get", err, res);
-     return ok([], res);
+     if (err) return r.error("Plugins.get", err, res);
+     return r.ok([], res);
    }
     );
 }

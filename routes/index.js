@@ -146,7 +146,7 @@ exports.config = function(req, res){
       };
       
       // TODO: factor out this logic so other resource handlers can use it later
-      var projectPanels = common.panels['project_config'];
+      var projectPanels = r.getPanelsForRepo(this.repo_config);
       r.loadPluginPanels(projectPanels, function(err, panels) {
         if (err) return r.error("Panels Error", err, res);
         
