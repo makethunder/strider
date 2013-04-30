@@ -125,22 +125,9 @@ exports.config = function(req, res){
     },
 
     function(err, deploy_target) {
-      var wrepo_config = whitelist_repo_config(this.repo_config);
-      var deploy_on_green = this.repo_config.prod_deploy_target.deploy_on_green;
-      // Default to true if not set
-      if (deploy_on_green === undefined) {
-        deploy_on_green = true;
-      }
-      var deploy_target_name = null;
-      if (deploy_target) {
-        deploy_target_name = deploy_target.app;
-      }
-      var params = {
-        repo_url: this.repo_config.url,
-        has_deploy_target: deploy_target != null,
-        deploy_target_name: deploy_target_name,
-        deploy_on_green: deploy_on_green
-      };
+      var wrepo_config = whitelist_repo_config(this.repo_config)
+        , deploy_on_green = this.repo_config.prod_deploy_target.deploy_on_green
+
 
       var out = {
          // May be undefined if not configured
@@ -148,8 +135,14 @@ exports.config = function(req, res){
          repo_org: req.params.org,
          repo_name: req.params.repo,
          apresController: "/javascripts/apres/controller/project_config.js",
-         apresParams: JSON.stringify(params),
-         panels: [],
+         apresParams: JSON.stringify({
+            repo_url: this.repo_config.url,
+            has_deploy_target: deploy_target != null,
+            deploy_target_name: deploy_target ? deploy_target.app : null,
+            // Default to true if not set
+            deploy_on_green: (deploy_on_green === undefined) ? true : deploy_on_green
+          }),
+         panels: []
       };
       
       // TODO: factor out this logic so other resource handlers can use it later
