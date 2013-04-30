@@ -40,6 +40,38 @@
 $(function(){
   $('.sortable').sortable();
 })
+
+$(function(){
+  var repo = $("html").data('controller-params').repo_url;
+
+  var panels = []
+
+  {% for panel in panels %} 
+  panels.push({ id: "{{panel.id}}", title: "{{panel.title}}"})
+  {% endfor %}
+  
+
+
+  $.getJSON("/api/repo/plugin", {repo: repo}, function(resp, status){
+    console.log("!!!", resp.results, panels);
+    var panelsOut = [];
+
+
+    panelsOut.concat(panels);
+    $.each(panelsOut, function(){
+      $('.plugins-panels').append(
+        $("<li />")
+          .append($("<input type='checkbox' />").val(this.checked ? "checked" : ""))
+          .append("<a href='#" + this.id +"' data-toggle='tab'>" + this.title + "</a>")
+      )
+    });
+
+
+
+  })
+
+})
+
 </script>
 
 <div class="strider-config span12">
@@ -64,14 +96,14 @@ $(function(){
 
       <h4>Plugins 
         <abbr title="Plugins specify how tests and deploys are run - you can enable and disable them per project, and reorder them so they can depend on each other">(?)</abbr></h4>
-      <ol class="sortable">
+      <ol class="plugins-panels sortable">
     
-        {% for panel in panels %}
+        {# for panel in panels 
         <li>
           <input type='checkbox' />
           <a href="#{{panel.id}}" data-toggle="tab">{{panel.title}}</a>
         </li>
-        {% endfor %}
+         endfor #}
       </ol>
       <a class='add-plugin' href = "#"><span class='icon-plus'></span> Add a plugin</a>
     </div>
