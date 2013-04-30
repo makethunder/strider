@@ -56,8 +56,18 @@ $(function(){
     console.log("!!!", resp.results, panels);
     var panelsOut = [];
 
+    $.each(resp.results, function(){
+      var id = this.id;
+      var enabled = this.enabled;
 
-    panelsOut.concat(panels);
+      for (var i in panels){
+        if (panels[i].id == id){
+          
+        }
+      }
+    })
+
+    panelsOut = panelsOut.concat(panels);
     $.each(panelsOut, function(){
       $('.plugins-panels').append(
         $("<li />")

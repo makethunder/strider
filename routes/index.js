@@ -14,6 +14,7 @@ var _ = require('underscore')
   , User = require(BASE_PATH + 'models').User
   , Job = require(BASE_PATH + 'models').Job
   , pjson = require('../package.json')
+  , r = require('./util')
   ;
 
 var TEST_ONLY = "TEST_ONLY";
@@ -111,21 +112,18 @@ exports.account = function(req, res){
 /*
  * GET /:org/:repo/config - project config page
  */
-exports.config = function(req, res)
-{
+exports.config = function(req, res){
   Step(
-    function() {
-      req.user.get_repo_config(req.repo_url, this);
-    },
+    r.getRepo(req),
+
     function(err, repo_config) {
-      if (err) {
-        console.error("config() - Error fetching repo config for user %s: %s", req.user.email, err);
-        res.statusCode = 400;
-        return res.end("Bad Request");
-      }
+      if (err)
+        return r.error("config() - Error fetching repo", err, res);
+
       this.repo_config = repo_config;
       req.user.get_prod_deploy_target(repo_config.url, this);
     },
+
     function(err, deploy_target) {
       var wrepo_config = whitelist_repo_config(this.repo_config);
       var deploy_on_green = this.repo_config.prod_deploy_target.deploy_on_green;
@@ -143,51 +141,25 @@ exports.config = function(req, res)
         deploy_target_name: deploy_target_name,
         deploy_on_green: deploy_on_green
       };
-      var apresParams = JSON.stringify(params);
-      var projectPanels = common.panels['project_config'];
-      var r = {
+
+      var out = {
          // May be undefined if not configured
          display_name: wrepo_config.display_name,
          repo_org: req.params.org,
          repo_name: req.params.repo,
          apresController: "/javascripts/apres/controller/project_config.js",
-         apresParams: apresParams,
+         apresParams: JSON.stringify(params),
          panels: [],
       };
+      
       // TODO: factor out this logic so other resource handlers can use it later
-      if (projectPanels) {
-        // For each panel, read contents from FS or execute callback to get HTML
-        Step(
-          function() {
-            var group = this.group();
-            projectPanels.forEach(function(p) {
-              var cb = group();
-              var f = function(err, res) {
-                p.contents = res;
-                cb(err, p);
-              };
-              // Panel sources can be a string which assumed to be a filesystem path
-              // or a function which is assumed to take a callback argument.
-              if (typeof(p.src) === 'string') {
-                fs.readFile(p.src, 'utf8', f);
-              } else if (typeof(p.src) === 'function') {
-                p.src(f);
-              }
-            });
-          },
-          function(err, panels) {
-            if (err) {
-              console.error("Error loading panels: %s", err);
-              res.statusCode = 500;
-              return res.end("Error handling request");
-            }
-            r.panels = panels;
-            return res.render('project_config.html', r);
-          }
-        );
-      } else {
-        return res.render('project_config.html', r);
-      }
+      var projectPanels = common.panels['project_config'];
+      r.loadPluginPanels(projectPanels, function(err, panels) {
+        if (err) return r.error("Panels Error", err, res);
+        
+        out.panels = panels;
+        return res.render('project_config.html', out);
+      });
     }
   );
 };
