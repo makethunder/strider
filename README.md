@@ -23,7 +23,6 @@ major differences:
 * An emphasis on extensibility. Plugins are powerful, easy to write and simple to install.
 * Out-of-the-box support for projects written in Node.JS, Python (generic and Django/Pyramid) and Selenium/Sauce Labs tests
 * Commercial support, consulting & hosting available
-* Coming soon: Ruby/Rails, JVM languages, PHP and more
 
 ## README Contents
 
@@ -32,10 +31,12 @@ major differences:
     - [Adding Users](#adduser)
     - [Starting Strider](#startup)
 - [Require()'ing Strider](#library)
+- [Extension & plugin guide](#extensions)
 - [Support & Help](#support)
 - [Getting Started with Strider Guide](#gettingstarted)
     - [Node.js: Continuous Integration](#getting-started-continuous-integration-for-nodejs)
     - [Node.js: Continuous Deployment to Heroku (+ MongoLab/MongoDB)](#getting-started-continuous-deployment-for-nodejs)
+    - [strider-custom.json configuration](#strider-customjson-configuration)
 
 
 <a name="infrastructure" />
@@ -136,6 +137,16 @@ var instance = strider("/path/to/extensions/dir", config, function(err, initiali
 
 ```
 
+<a name="extensions" />
+Extending & Customizing Strider 
+===============================
+
+Strider is extremely customizable and extensible through plugins. Plugins can add hooks to perform arbitrary actions
+during build. They can modify the database schema to add custom fields. They can also register their own HTTP routes. Even
+the front-end is highly customizable through template extensions.
+
+For documentation on extending Strider, see [strider-extension-loader](https://github.com/Strider-CD/strider-extension-loader)'s README.
+
 <a name="support" />
 Support & Help
 ==============
@@ -143,9 +154,11 @@ Support & Help
 
 IRC: irc.freenode.net #strider
 
-Google Group: https://groups.google.com/d/forum/strider-users
+We are very responsive to Github Issues - please think of them as a message board for the project!
 
-For commercial support & hosting enquiries please email hello@stridercd.com
+Strider is maintained and supported by [FrozenRidge,
+LLC](http://frozenridge.co). For commercial support, customization, integration
+& hosting enquiries please email hi@frozenridge.co.
 
 
 <a name="gettingstarted" />
@@ -241,3 +254,17 @@ Once you turn off 'deploy on green', Strider will deploy the project to Heroku O
 ## More Information
 
 For more information on how to configure a node.js app to work on Heroku, see [Getting Started with Node.js on Heroku/Cedar](https://devcenter.heroku.com/articles/nodejs).
+
+<h2 id="cd_nodejs" class="docs-section">strider-custom.json configuration</h2>
+[Strider-custom](https://github.com/Strider-CD/strider-custom) is a plugin that comes bundled with strider and allows you to specify custom prepare, test, and deploy scripts via a `strider-custom.json` file in your project, similar to a `.travis.yml` file for travis-ci.
+
+Example:
+
+```json
+{
+  "prepare": "echo executed prepare statement!",
+  "test": "echo executed deploy statement!",
+  "deploy": "echo deploy && git push heroku master --force"
+}
+```
+
