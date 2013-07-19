@@ -94,7 +94,7 @@ module.exports = function(extdir, c, callback) {
     registerWorkerMessageHook: registerWorkerMessageHook,
     registerWorkerMessagePostProcessor: registerWorkerMessagePostProcessor,
     registerPanel: registerPanel,
-    registerBlock: pluginTemplates.registerBlock,
+    registerBlock: pluginTemplates.registerBlock
   };
 
   // Make extension context available throughout application.

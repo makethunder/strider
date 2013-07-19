@@ -56,7 +56,7 @@ describe('middleware', function() {
       response_api.statusCode.should.eql(401);
       response_api.statusCode = 0;
 
-      var mock_req = {user:{
+      mock_req = {user:{
           github_config:[{url:"https://github.com/beyondfog/good"}],
           get_repo_config:function(url, cb) {  return cb(null, mock_req.user.github_config[0]); }
         },

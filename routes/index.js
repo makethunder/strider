@@ -25,9 +25,9 @@ var TEST_AND_DEPLOY = "TEST_AND_DEPLOY";
  */
 
 exports.index = function(req, res){
-  if (req.loggedIn == false){
+  if (req.loggedIn === false){
   }
-  if (req.session.return_to != null) {
+  if (req.session.return_to !== null) {
     var return_to = req.session.return_to;
     req.session.return_to=null;
     res.redirect(return_to);
@@ -37,7 +37,7 @@ exports.index = function(req, res){
       code = req.param('code');
           res.render('register.html', {invite_code:code});
     } else {
-      if (req.user != undefined) {
+      if (req.user !== undefined) {
         req.user.get_repo_config_list(function(err, repo_list) {
           if (err) throw err;
           res.render('index.html',{total_configured_projects:repo_list.length});
@@ -79,8 +79,8 @@ function whitelist_repo_metadata(repo_metadata) {
 exports.kickoff = function(req, res, github) {
   var gh = github || gh;
   // Assert cached github metadata
-  if (req.user.github_metadata === undefined
-    || req.user.github_metadata[req.user.github.id] === undefined) {
+  if (req.user.github_metadata === undefined ||
+      req.user.github_metadata[req.user.github.id] === undefined) {
     res.statusCode = 400;
     res.end("please call /api/github/metadata before this");
   } else {
@@ -140,7 +140,7 @@ exports.config = function(req, res)
       }
       var params = {
         repo_url: this.repo_config.url,
-        has_deploy_target: deploy_target != null,
+        has_deploy_target: deploy_target !== null,
         deploy_target_name: deploy_target_name,
         deploy_on_green: deploy_on_green
       };
@@ -218,6 +218,7 @@ exports.webhook_signature = function(req, res)
       var github_commit_info = gh.webhook_extract_latest_commit_info(payload);
       var repo_ssh_url;
       var repo_metadata;
+      var deploy_config;
       if (user.github.id) {
         repo_metadata = _.find(user.github_metadata[user.github.id].repos, function(item) {
           return repo.url == item.html_url.toLowerCase();
@@ -237,12 +238,12 @@ exports.webhook_signature = function(req, res)
       }
       console.debug("POST to Github /webhook payload: %j", payload);
       if (repo.has_prod_deploy_target) {
-        var deploy_config = _.find(user[repo.prod_deploy_target.provider], function(item) {
+        deploy_config = _.find(user[repo.prod_deploy_target.provider], function(item) {
           return item.account_id === repo.prod_deploy_target.account_id;
         });
         jobs.startJob(user, repo, deploy_config, github_commit_info, repo_ssh_url, TEST_AND_DEPLOY);
       } else {
-        jobs.startJob(user, repo, deploy_config, github_commit_info, repo_ssh_url, TEST_ONLY);
+        jobs.startJob(user, repo, {}, github_commit_info, repo_ssh_url, TEST_ONLY);
       }
       res.end("webhook good");
     } else {
