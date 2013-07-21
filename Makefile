@@ -2,6 +2,9 @@
 build: less
 	@:
 
+demo:
+	git push heroku-demo mine:master
+
 less_files := strider.less
 css_files := $(patsubst %.less,public/stylesheets/css/%.css,$(less_files))
 
