@@ -36,7 +36,7 @@
     "swig": "git+https://github.com/peterbraden/swig",
     "cookie": "0.0.5",
     "socket.io": "~0.9.13",
-    "strider-simple-worker": "~0.7.3"
+    "strider-simple-worker": "git+https://github.com/Strider-CD/strider-simple-worker.git"
   },
   "devDependencies": {
     "mocha": "~1.12.0",
