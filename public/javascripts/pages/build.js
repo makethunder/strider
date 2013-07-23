@@ -320,7 +320,9 @@ app.controller('JobCtrl', ['$scope', '$route', '$location', 'jobs', function ($s
   });
 
   $scope.$watch('job.output', function (value) {
-    if ($scope.job && $scope.job.running) return;
+    if ($scope.job && $scope.job.running) {
+      return;
+    }
     console.scrollTop = console.scrollHeight;
     setTimeout(function () {
       console.scrollTop = console.scrollHeight;
@@ -402,7 +404,7 @@ app.controller('JobCtrl', ['$scope', '$route', '$location', 'jobs', function ($s
     jobtimers[id] = null
   }
   io.connect().on('new', function (data) {
-    if (data.repo_url != $scope.job.repo_url) return;
+    if (data.repo_url != repo.url) return;
     data.past_duration = $scope.jobs.list[0].duration;
     data.duration = 0;
     data.output = '';
@@ -412,7 +414,7 @@ app.controller('JobCtrl', ['$scope', '$route', '$location', 'jobs', function ($s
     $location.path('/' + project + '/job/' + jobid);
     $scope.$root.$digest();
   }).on('update', function (data) {
-    if (data.repo_url != $scope.job.repo_url) return;
+    if (data.repo_url != repo.url) return;
     if (!$scope.jobs.ids[data.id]) {
       var d = new Date().getTime();
       $scope.job = jobs.update(project, {
@@ -434,6 +436,10 @@ app.controller('JobCtrl', ['$scope', '$route', '$location', 'jobs', function ($s
     if (!job.past_duration && $scope.jobs.list[0]) {
       job.past_duration = $scope.jobs.list[0].duration;
     }
+    if (data.msg[0] === '\r') {
+      job.output = job.output.slice(0, job.output.lastIndexOf('\n') + 1);
+      data.msg = data.msg.slice(1);
+    }
     job.output += data.msg;
     job.time_elapsed = data.time_elapsed;
     var height, tracking = false;
@@ -447,7 +453,7 @@ app.controller('JobCtrl', ['$scope', '$route', '$location', 'jobs', function ($s
       console.scrollTop = console.scrollHeight;
     }
   }).on('done', function(data) {
-    if (data.repo_url != $scope.job.repo_url) return;
+    if (data.repo_url != repo.url) return;
     clearJobTimer(data.id);
     $scope.job = jobs.update(project, data);
     $scope.$digest();
