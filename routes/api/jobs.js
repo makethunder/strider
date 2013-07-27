@@ -17,6 +17,7 @@ var _ = require('underscore')
   , filter = require(BASE_PATH + 'ansi')
   , ljobs = jobs
   , Job = require(BASE_PATH + 'models').Job
+  , User = require(BASE_PATH + 'models').User
   , logging = require(BASE_PATH + 'logging')
   ;
 
@@ -113,13 +114,34 @@ exports.jobs_start = function(req, res) {
  * Return the merged output
  */
 exports.raw = function(req, res) {
-  // console.log(req, req.params.id);
+  function err() {
+         res.statusCode = 404;
+         return res.send("Job not found");
+  }
+
   Job.findById(req.params.id)
      .lean(true)
      .exec(function (err, job) {
-       if (err || !job || job._owner+'' !== req.user._id+'') return res.send("Job not found");
-       res.setHeader('Content-type', 'text/plain');
-       res.send(job.stdmerged ? filter(job.stdmerged) : '');
+       if (err || !job) {
+         return err()
+       }
+       function gotRepo(err, r) {
+         if (err || !r) {
+           return err()
+         }
+         res.setHeader('Content-type', 'text/plain');
+         res.send(job.stdmerged ? filter(job.stdmerged) : '');
+       }
+       if (req.user) {
+         userId = req.user._id;
+         req.user.get_repo_config(job.repo_url, gotRepo)
+       } else {
+         User.findOne({"github_config":{$elemMatch:{
+           "url":job.repo_url.toLowerCase(),
+           "public": true
+         }}}, gotRepo
+         )
+       }
   });
 };
 
@@ -127,8 +149,8 @@ function killOldJobs(job) {
   if (!job.created_timestamp) return false;
   if (job.finished_timstamp !== undefined) return true;
   if (job.test_exitcode !== undefined) return;
-  // anything older than 10 minutes that hasn't ended is pronounced hanged
-  if (new Date().getTime() - job.created_timestamp.getTime() > 10 * 60 * 1000) {
+  // anything older than 1 hour that hasn't ended is pronounced hanged
+  if (new Date().getTime() - job.created_timestamp.getTime() > 60 * 60 * 1000) {
     console.log('killing old job', job.repo_url, job._id);
     var msg = '\r\n\u001b[35m[STRIDER]\u001b[0m job timeout after 10 minutes\r\n';
     var data = {
