@@ -44,6 +44,8 @@ var loadPluginPanel = function(p, cb){
     fs.readFile(p.src, 'utf8', after);
   } else if (typeof(p.src) === 'function') {
     p.src(after);
+  } else {
+    cb();
   }
 }
 

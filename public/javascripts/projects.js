@@ -65,7 +65,7 @@ $(function() {
   // One repository from /api/github/metadata
   window.Repo = Backbone.Model.extend({
     short_url: function() {
-      return this.get('html_url').replace(/https:\/\/github.com/gi, '');
+      return this.get('html_url').replace(/https:\/\/github.com\//gi, '');
     },
 
     defaults: function() {
@@ -101,22 +101,66 @@ $(function() {
 
     render: function() {
 
-      var data = this.model.toJSON();
+      var data = this.model.toJSON()
+        , self = this;
       data.short_url = this.model.short_url();
-      $(this.el).html(this.template(data));
+      $(this.el).html(this.template(data)).addClass('project');
       $(this.el).find(".test-only-action").click($.proxy(function() {
         startJob(this.model.attributes.html_url, "TEST_ONLY");
       }, this));
       $(this.el).find(".test-and-deploy-action").click($.proxy(function() {
         startJob(this.model.attributes.html_url, "TEST_AND_DEPLOY");
       }, this));
+
+      $('.switcher', this.el).bootstrapSwitch()
+        .on('switch-change', function (e, what) {
+          if (what.value) {
+            if (data.configured) {
+              return;
+            }
+            window.location = '/kickoff/' + self.model.id;
+            return;
+          }
+          // deactivate? don't know
+          bootbox.confirm('Really delete ' + data.short_url + ' configuration?', function (value) {
+            if (value) {
+              // make it loading?
+              deleteProject(data.html_url);
+              data.configured = false;
+              $('.config-link', self.el).replaceWith('<span>' + data.short_url + '</span>');
+            } else {
+              $('.switcher', self.el)
+                .bootstrapSwitch('setState', true);
+            }
+          });
+        });
+          
       return this;
     }
-
 
   });
 
 
+  // Delete a project
+  function deleteProject(url, next) {
+    $.ajax({
+      url: "/api/repo",
+      type: "DELETE",
+      data: {url: url},
+      success: function(data, ts, xhr) {
+        console.log('done');
+        next && next();
+      },
+      error: function(xhr, ts, e) {
+        if (xhr && xhr.responseText) {
+          var data = $.parseJSON(xhr.responseText);
+          console.log("Error deleting project: " + data.errors[0], "alert-error");
+        } else {
+          console.log("Error deleting project: " + e, "alert-error");
+        }
+      }
+    });
+  }
 
   // Represents the whole JS dashboard App
   window.DashboardAppView = Backbone.View.extend({
@@ -197,22 +241,23 @@ $(function(){
     }
   });
   $('#dashboard').on('keyup', '.repoFilters', function(){
-    var filterText = $(this).val();
+    var filterText = $.trim($(this).val());
+
+    if (!filterText) {
+      [].slice.call(document.querySelectorAll('#repo-list .project.hide')).forEach(function (item) {
+        item.classList.remove('hide');
+      });
+      return;
+    }
+    [].slice.call(document.querySelectorAll('#repo-list .project')).forEach(function (item) {
+      if (item.innerText.toLowerCase().indexOf(filterText) === -1) {
+        item.classList.add('hide');
+      } else {
+        item.classList.remove('hide');
+      }
+    });
     console.log("Filter", filterText);
 
-    $('#repo-list>div').each(function(){
-      if (filterText == ''){
-        $(this).show()
-      } else {
-        var found = $(this).find(":containsi(" + filterText + ")").length
-        if (found > 0){
-          $(this).show()
-        } else {
-          $(this).hide()
-        }
-      }
-    })
-
-  })
+  });
 
 })

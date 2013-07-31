@@ -3,6 +3,9 @@
 $(function() {
 
   var intervals = {}
+  // instead of "about %d hours"
+  $.timeago.settings.strings.hours = '%d hours';
+  $.timeago.settings.localeTitle = true;
 
   function addInterval(url, i) {
     if (intervals[url] && intervals[url].indexOf(i) === -1) {
@@ -48,8 +51,8 @@ $(function() {
       });
 
       var previous_duration = 600;
-      if (job !== undefined || job.get('duration') === "N/A") {
-       var previous_duration = job.get('duration');   
+      if (job !== undefined && job.get('duration') === "N/A") {
+       previous_duration = job.get('duration');   
       }
       
       var current_duration = Math.round(data.time_elapsed);
@@ -96,6 +99,8 @@ $(function() {
     
     job.set('duration_text', "TBD");
     job.set('finished_at',"<i>In Progress</i>");
+    job.set('finished_timestamp', false);
+    job.set('triggered_by_commit', false);
     job.set('success',"TBD");
     job.set('success_text',"TBD");
     job.set("created_timestamp",new Date());
@@ -125,9 +130,9 @@ $(function() {
 
   };
 
-  window.startJob = function(url, job_type) {
+  window.startJob = function(url, job_type, deployable) {
     status_msg("Sending start message...", "info", "#spinner-msg");
-
+    $('.tooltip').hide();
 
     // Default job type is TEST_AND_DEPLOY
     if (job_type === undefined) {
@@ -144,11 +149,12 @@ $(function() {
             .removeClass('alert alert-error alert-success alert-info').addClass('alert alert-error')
             .text(xhr.responseText);
       },
-      success: function(data, ts, xhr) {
+      success: function(newjob, ts, xhr) {
         var job = JobList.find(function(item) {
           return item.get('repo_url') === url;
         });
         status_msg("Running job...", "info", "#spinner-msg");
+        job.set(newjob);
 
         startProgressMeter(job);
       },
@@ -161,6 +167,7 @@ $(function() {
   // Represents an individual Job in the list
   window.JobView = Backbone.View.extend({
     template: _.template($("#dashboard-job-item").html()),
+    tagName: 'tr',
 
     events: {
       // We will have some here eventually.
@@ -175,24 +182,29 @@ $(function() {
       if (!this.model.get('duration_text')) {
         this.model.set('duration_text', this.model.get('duration'));
       }
+      if (!this.model.get('job_url')) {
+        this.model.set('job_url', '/' + this.model.get('project_name') + '/latest_build');
+        this.model.set('job_id', 'Pending');
+      }
       $(this.el).html(this.template(this.model.toJSON()));
       $(this.el).find(".test-only-action").click($.proxy(function() {
-        startJob(this.model.attributes.repo_url, "TEST_ONLY");
+        startJob(this.model.attributes.repo_url, "TEST_ONLY", this.model.attributes.project_deployable);
       }, this));
       $(this.el).find(".test-and-deploy-action").click($.proxy(function() {
-        startJob(this.model.attributes.repo_url, "TEST_AND_DEPLOY");
+        startJob(this.model.attributes.repo_url, "TEST_AND_DEPLOY", this.model.attributes.project_deployable);
       }, this));
       if (this.model.get('in_progress')) {
         $(this.el).find('.bar').width(this.model.get('progress') + "%");
         $(this.el).find('.progress-meter').show();
       }
+      $('.timeago', this.el).timeago();
+      $('[data-toggle="tooltip"]', this.el).tooltip();
 
       return this;
     }
 
 
   });
-
 
   // Represents the whole JS dashboard App
   window.DashboardAppView = Backbone.View.extend({
@@ -236,6 +248,12 @@ $(function() {
       $("#job-list .empty").remove();
       if (JobList.length > 0){
         JobList.each(function(job) {
+          if (!job.get('finished_timestamp')) {
+            job.set('finished_timestamp', false);
+          }
+          if (!job.get('triggered_by_commit')) {
+            job.set('triggered_by_commit', false);
+          }
           var view = new JobView({model: job});
           var jobel = view.render().el;
           $("#job-list").append(jobel);

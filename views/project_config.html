@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 
+{% block extra_head %}
+<link rel="stylesheet" href="/stylesheets/css/config.css">
+<link rel="stylesheet" href="/stylesheets/css/bootstrap-switch.css"/>
+{% endblock %}
 {% block bodyContent %}
 <script data-main="/apres/js/lib/apres-dev.js" src="/apres/js/lib/require-1.0.8.js"></script>
 <script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js" ></script>
@@ -190,12 +194,52 @@ $(function(){
       </div>
       <div id="deactivate" class="tab-pane">
         <div id="project_config_deactivate" data-widget="/javascripts/apres/widget/deactivate.js" class="widget span8"></div>
+        
+        
+        
+        
+        
+        
+        {% include "config/boot-badge.html" %}
+<div id="config-wrapper" class="ng-cloak" ng-app="config" ng-controller="Config"
+     data-repo-config='{{ repo | json_encode() | raw }}'
+     data-panel-data='{{ panelData | json_encode() | raw }}'>
+  <button href="#build-badge-modal" data-toggle="modal" class="badge-link pull-right btn">Build Badge</button>
+  <div class="notify-wrapper pull-right">
+    <div id="notify" ng-class="{ visible: message.showing }" class="alert alert-[[ message.type ]]">
+      <a type="button" class="close" ng-click="clearMessage()">&times;</a>
+      <div class="message" ng-bind-html-unsafe="message.text"></div>
+    </div>
+  </div>
+  <h3>Configuration - <a href="/{{display_name}}/" class="header-emphasis">{{display_name}}</a></h3>
+  <p>
+    <div class="tabbable tabs-left">
+      <ul class="nav nav-tabs span2 config-tabs">
+        {% for panel in panels %}
+        <li {% if loop.first %}class="active"{% endif %}>
+          <a href="#{{panel.id}}" data-toggle="tab">{{panel.title}}</a>
+        </li>
+        {% endfor %}
+      </ul>
+      <div class="tab-content span10">
+        <div id="loading" class="hide">
+          <img src="/images/spinner.gif" class="spinner"/>
+          [[ loadingMessage ]]
+        </div>
+        {% for panel in panels %}
+        <div id="{{panel.id}}" class="tab-pane {% if loop.first %}active{% endif %}" ng-controller="{{panel.controller}}">
+        {% autoescape false %}
+        {{ panel.contents }}
+        {% endautoescape %}
+        </div>
+        {% endfor %}
       </div>
     </div>
   </div>
 </div>
-<script type="text/template" id="github-setup" class="template">
-  <!--Empty-->
-</script>
-<script id="spinner-msg" type="text/template" class="template"><img src="/images/spinner.gif" class="spinner"/><%= message %></script>
+  <script src="/javascripts/lib/bootstrap-switch.js"></script>
+<script src='/javascripts/pages/config.js'></script>
+{% for panel in panels %}
+<script src="{{ panel.script_path }}"></script>
+{% endfor %}
 {% endblock %}
