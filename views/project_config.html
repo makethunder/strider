@@ -11,7 +11,6 @@
 <style>
 
 .strider-config .nav{
-  border-right:1px solid #999;
 }
 .strider-config .nav ul, .strider-config ol{
   margin:0;
@@ -59,6 +58,12 @@
 .strider-config .working{
   background-color:#bbb;
 }
+
+.strider-config .tab-content{
+  border-left:1px solid #ccc;
+  margin-left:-1px;
+}
+
 </style>
 <script>
 $(function(){
@@ -93,19 +98,29 @@ $(function(){
 
 </script>
 
+<div id="config-wrapper" class="ng-cloak" ng-app="config" ng-controller="Config"
+     data-repo-config='{{ repo | json_encode() | raw }}'
+     data-panel-data='{{ panelData | json_encode() | raw }}'>
+
 <div class="strider-config">
-  <ul class='breadcrumb'>
-    <li><a href = "/">Repositories</a><span class='divider'>/</span></li>
-    <li><a href = "">{{display_name }}</a><span class='divider'>/</span></li>
-    <li class='active'>Configuration</li>
-  </ul>
+  <div class='row-fluid'>
+    <ul class='span8 breadcrumb'>
+      <li><a href = "/">Repositories</a><span class='divider'>/</span></li>
+      <li><a href = "">{{display_name }}</a><span class='divider'>/</span></li>
+      <li class='active'>Configuration</li>
+    </ul>
+    <div class='span2'>
+      <button href="#build-badge-modal" data-toggle="modal" class="badge-link btn">Build Badge</button>
+      {% include "config/boot-badge.html" %}
+    </div>
+  </div>
 
   <div class='row-fluid'>
     <div class="tabbable tabs-left span2">
       <div class='nav'/>
-        <h4>Repo Setup</h4>
+        <h4>Project Config</h4>
         <ul class='nav-static'>
-          <li><a href="#github_config" data-toggle="tab">Github Config</a></li>
+          <li><a href="#repo_config" data-toggle="tab">Setup</a></li>
           <li><a href="#webhooks" data-toggle="tab">Webhooks</a></li>
           <li><a href="#collaborators" data-toggle="tab">Collaborators</a></li>
           <li><a href="#deactivate" data-toggle="tab">Deactivate</a></li>
@@ -125,19 +140,19 @@ $(function(){
           {% endfor %}
         </ol>
         <a class='add-plugin' href = "#"><span class='icon-plus'></span> Add a plugin</a>
-    </div>
-  </div>
-    <div class="tab-content span10">
-      <!--each panel in panels-->
-      <!--  div(id="#{panel.id}").tab-pane-->
-      <!--   !{panel.contents}-->
-      {% for panel in panels %}
-      <div id="{{panel.id}}" class="tab-pane">
-      {% autoescape false %}
-      {{panel.contents}}
-      {% endautoescape %}
       </div>
+    </div>
+
+
+    <div class="tab-content span10">
+      {% for panel in panels %}
+        <div id="{{panel.id}}" class="tab-pane">
+        {% autoescape false %}
+          {{panel.contents}}
+        {% endautoescape %}
+        </div>
       {% endfor %}
+
       <div id="collaborators" class="tab-pane active">
         <div id="project_config_collaborators" data-widget="/javascripts/apres/widget/collaborators.js" class="widget span8">
           <div class="well">
@@ -164,7 +179,7 @@ $(function(){
           </div>
         </div>
       </div>
-      <div id="github_config" class="tab-pane">
+      <div id="repo_config" class="tab-pane">
         <div class="row-fluid">
           <div class="span10">
             <h3>Github Settings</h3>
@@ -208,59 +223,12 @@ $(function(){
           </div>
         </div>
       </div>
-      <div id="deactivate" class="tab-pane">
-        <div id="project_config_deactivate" data-widget="/javascripts/apres/widget/deactivate.js" class="widget span8"></div>
-        
-        
-        
-        
-        
-        
-        {% include "config/boot-badge.html" %}
-<div id="config-wrapper" class="ng-cloak" ng-app="config" ng-controller="Config"
-     data-repo-config='{{ repo | json_encode() | raw }}'
-     data-panel-data='{{ panelData | json_encode() | raw }}'>
 
-  <button href="#build-badge-modal" data-toggle="modal" class="badge-link pull-right btn">Build Badge</button>
-  <div class="notify-wrapper pull-right">
-    <div id="notify" ng-class="{ visible: message.showing }" class="alert alert-[[ message.type ]]">
-      <a type="button" class="close" ng-click="clearMessage()">&times;</a>
-      <div class="message" ng-bind-html-unsafe="message.text"></div>
-    </div>
-  </div>
-  <h3>Configuration - <a href="/{{display_name}}/" class="header-emphasis">{{display_name}}</a></h3>
-  <p>
-    <div class="tabbable tabs-left">
-      <ul class="nav nav-tabs span2 config-tabs">
-        {% for panel in panels %}
-        <li {% if loop.first %}class="active"{% endif %}>
-          <a href="#{{panel.id}}" data-toggle="tab">{{panel.title}}</a>
-        </li>
-        {% endfor %}
-      </ul>
-    </div>
-    </p>
-  </div>
-      <div class="tab-content span10">
-        <div id="loading" class="hide">
-          <img src="/images/spinner.gif" class="spinner"/>
-          [[ loadingMessage ]]
-        </div>
-        {% for panel in panels %}
-        <div id="{{panel.id}}" class="tab-pane {% if loop.first %}active{% endif %}" ng-controller="{{panel.controller}}">
-        {% autoescape false %}
-        {{ panel.contents }}
-        {% endautoescape %}
-        </div>
-        {% endfor %}
-      </div>
-    </div>
-  </div>
 </div>
-</div>
-  <script src="/javascripts/lib/bootstrap-switch.js"></script>
+
+
+<script src="/javascripts/lib/bootstrap-switch.js"></script>
 <script src='/javascripts/pages/config.js'></script>
-
 {% for panel in panels %}
 <script src="{{ panel.script_path }}"></script>
 {% endfor %}
