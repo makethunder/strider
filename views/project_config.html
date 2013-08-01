@@ -93,40 +93,41 @@ $(function(){
 
 </script>
 
-<div class="strider-config span12">
+<div class="strider-config">
   <ul class='breadcrumb'>
     <li><a href = "/">Repositories</a><span class='divider'>/</span></li>
     <li><a href = "">{{display_name }}</a><span class='divider'>/</span></li>
     <li class='active'>Configuration</li>
   </ul>
 
-  <div class="tabbable tabs-left row">
-    <div class='nav span2'>
-      <h4>Repo Setup</h4>
-      <ul class='nav-static'>
-        <li><a href="#github_config" data-toggle="tab">Github Config</a></li>
-        <li><a href="#webhooks" data-toggle="tab">Webhooks</a></li>
-        <li><a href="#collaborators" data-toggle="tab">Collaborators</a></li>
-        <li><a href="#deactivate" data-toggle="tab">Deactivate</a></li>
-      </ul>
+  <div class='row-fluid'>
+    <div class="tabbable tabs-left span2">
+      <div class='nav'/>
+        <h4>Repo Setup</h4>
+        <ul class='nav-static'>
+          <li><a href="#github_config" data-toggle="tab">Github Config</a></li>
+          <li><a href="#webhooks" data-toggle="tab">Webhooks</a></li>
+          <li><a href="#collaborators" data-toggle="tab">Collaborators</a></li>
+          <li><a href="#deactivate" data-toggle="tab">Deactivate</a></li>
+        </ul>
 
-      <br style='clear:both' />
+        <br style='clear:both' />
 
-      <h4>Plugins 
-        <abbr title="Plugins specify how tests and deploys are run - you can enable and disable them per project, and reorder them so they can depend on each other">(?)</abbr></h4>
-      <ol class="plugins-panels sortable nav-drag">
-    
-        {% for panel in panels %}
-        <li class=''>
-          <input id= "plugin-enable-{{panel.id}}" type='checkbox' />
-          <a href="#{{panel.id}}" data-toggle="tab">{{panel.title}}</a>
-        </li>
-        {% endfor %}
-      </ol>
-      <a class='add-plugin' href = "#"><span class='icon-plus'></span> Add a plugin</a>
+        <h4>Plugins 
+          <abbr title="Plugins specify how tests and deploys are run - you can enable and disable them per project, and reorder them so they can depend on each other">(?)</abbr></h4>
+
+        <ol class="plugins-panels sortable nav-drag">
+          {% for panel in panels %}
+          <li class=''>
+            <input id= "plugin-enable-{{panel.id}}" type='checkbox' />
+            <a href="#{{panel.id}}" data-toggle="tab">{{panel.title}}</a>
+          </li>
+          {% endfor %}
+        </ol>
+        <a class='add-plugin' href = "#"><span class='icon-plus'></span> Add a plugin</a>
     </div>
-
-    <div class="tab-content">
+  </div>
+    <div class="tab-content span10">
       <!--each panel in panels-->
       <!--  div(id="#{panel.id}").tab-pane-->
       <!--   !{panel.contents}-->
@@ -237,6 +238,9 @@ $(function(){
         </li>
         {% endfor %}
       </ul>
+    </div>
+    </p>
+  </div>
       <div class="tab-content span10">
         <div id="loading" class="hide">
           <img src="/images/spinner.gif" class="spinner"/>
@@ -253,9 +257,12 @@ $(function(){
     </div>
   </div>
 </div>
+</div>
   <script src="/javascripts/lib/bootstrap-switch.js"></script>
 <script src='/javascripts/pages/config.js'></script>
+
 {% for panel in panels %}
 <script src="{{ panel.script_path }}"></script>
 {% endfor %}
+
 {% endblock %}
