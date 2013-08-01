@@ -17,15 +17,32 @@
   margin:0;
   padding:0;
 }
+
 .strider-config .nav li{
   list-style:none;
+}
+.strider-config .nav-static li a,
+.strider-config .nav-drag li{
+  display:block;
   padding:0.5em;
-  margin:1px;
+  margin:4px;
   border:1px solid #eee;
   border-radius:1em 0 0 1em;
   border-right:none;
+  margin-right:0px;
+
+  background-image: -webkit-linear-gradient(top, #ffffff, #f5f5f5);
+  background-image: -o-linear-gradient(top, #ffffff, #f5f5f5);
+  background-image: linear-gradient(top, #ffffff, #f5f5f5);
+  background-repeat: repeat-x;
+  cursor:pointer;
 
 }
+
+.strider-config .nav li a:hover{
+  background-image: none;
+}
+
 .strider-config .nav h4{
   text-align:center;
 }
@@ -86,7 +103,7 @@ $(function(){
   <div class="tabbable tabs-left row">
     <div class='nav span2'>
       <h4>Repo Setup</h4>
-      <ul class=''>
+      <ul class='nav-static'>
         <li><a href="#github_config" data-toggle="tab">Github Config</a></li>
         <li><a href="#webhooks" data-toggle="tab">Webhooks</a></li>
         <li><a href="#collaborators" data-toggle="tab">Collaborators</a></li>
@@ -97,10 +114,10 @@ $(function(){
 
       <h4>Plugins 
         <abbr title="Plugins specify how tests and deploys are run - you can enable and disable them per project, and reorder them so they can depend on each other">(?)</abbr></h4>
-      <ol class="plugins-panels sortable">
+      <ol class="plugins-panels sortable nav-drag">
     
         {% for panel in panels %}
-        <li>
+        <li class=''>
           <input id= "plugin-enable-{{panel.id}}" type='checkbox' />
           <a href="#{{panel.id}}" data-toggle="tab">{{panel.title}}</a>
         </li>
