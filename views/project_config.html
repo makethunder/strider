@@ -121,9 +121,8 @@ $(function(){
         <h4>Project Config</h4>
         <ul class='nav-static'>
           <li><a href="#repo_config" data-toggle="tab">Setup</a></li>
-          <li><a href="#webhooks" data-toggle="tab">Webhooks</a></li>
           <li><a href="#collaborators" data-toggle="tab">Collaborators</a></li>
-          <li><a href="#deactivate" data-toggle="tab">Deactivate</a></li>
+          <li><a href="#webhooks" data-toggle="tab">Webhooks</a></li>
         </ul>
 
         <br style='clear:both' />
@@ -153,7 +152,44 @@ $(function(){
         </div>
       {% endfor %}
 
-      <div id="collaborators" class="tab-pane active">
+      <div id="repo_config" class="tab-pane active content">
+        <div class='row-fluid'>
+          <p></p>
+
+          <div class='span10 offset1'>
+            <h3>Repository</h3>
+
+            <ul class="nav nav-tabs">
+              <li><a href ="#github" data-target="#repo_source">Github</a></li>
+              <li class='disabled'><a href ="#custom_git" data-target="#repo_source">Custom Git</a></li>
+            </ul>
+
+            <div id="repo_source" class='well'>
+              <div id="github">
+                <strong>Remove Github Webhooks</strong>
+                <p>If you ONLY want to kickoff tests manually via the Strider web interface,
+                Strider can remove the webhook from Github. This will mean Strider is never
+                notified of any commits you make. If you change your mind later, we can always
+                add them back for you from this page.</p>
+                <div class="actions"><a id="remove-github-webhooks" class="btn btn-danger">Remove Github Webhooks</a></div>
+              </div>
+            </div>
+          </div>
+
+          <div class='span10 offset1'>
+            <h3>Build Environment / Worker</h3>
+            <p>Currently only simple-worker is supported</p>
+          </div>
+
+          <div class='span10 offset1'>
+            <h3>Deactivate</h3>
+          </div>
+        </div>
+      </div>
+
+      <!-- Special Case Panels - TODO - Kill -->
+
+      <div id="collaborators" class="tab-pane">
         <div id="project_config_collaborators" data-widget="/javascripts/apres/widget/collaborators.js" class="widget span8">
           <div class="well">
             <fieldset>
@@ -176,17 +212,6 @@ $(function(){
                 </div>
               </div>
             </fieldset>
-          </div>
-        </div>
-      </div>
-      <div id="repo_config" class="tab-pane">
-        <div class="row-fluid">
-          <div class="span10">
-            <h3>Github Settings</h3>
-            <p></p>
-            <hr/><strong>Remove Github Webhooks</strong>
-            <p>If you ONLY want to kickoff tests manually via the Strider web interface, Strider can remove the webhook from Github. This will mean Strider is never notified of any commits you make. If you change your mind later, we can always add them back for you from this page.</p>
-            <div class="actions"><a id="remove-github-webhooks" class="btn btn-danger">Remove Github Webhooks</a></div>
           </div>
         </div>
       </div>
