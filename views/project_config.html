@@ -5,7 +5,6 @@
 <link rel="stylesheet" href="/stylesheets/css/bootstrap-switch.css"/>
 {% endblock %}
 {% block bodyContent %}
-<script data-main="/apres/js/lib/apres-dev.js" src="/apres/js/lib/require-1.0.8.js"></script>
 <script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js" ></script>
 {% include "projects_config_templates.html" %}
 
@@ -92,7 +91,6 @@ $(function(){
         <li><a href="#webhooks" data-toggle="tab">Webhooks</a></li>
         <li><a href="#collaborators" data-toggle="tab">Collaborators</a></li>
         <li><a href="#deactivate" data-toggle="tab">Deactivate</a></li>
-        <li><a href="#heroku" data-toggle="tab">Heroku Config</a></li>
       </ul>
 
       <br style='clear:both' />
@@ -204,6 +202,7 @@ $(function(){
 <div id="config-wrapper" class="ng-cloak" ng-app="config" ng-controller="Config"
      data-repo-config='{{ repo | json_encode() | raw }}'
      data-panel-data='{{ panelData | json_encode() | raw }}'>
+
   <button href="#build-badge-modal" data-toggle="modal" class="badge-link pull-right btn">Build Badge</button>
   <div class="notify-wrapper pull-right">
     <div id="notify" ng-class="{ visible: message.showing }" class="alert alert-[[ message.type ]]">

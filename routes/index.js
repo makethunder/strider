@@ -19,6 +19,7 @@ var _ = require('underscore')
   , Job = require(BASE_PATH + 'models').Job
   , pjson = require('../package.json')
   , r = require('./util')
+  , _ = require('lodash')
   ;
 var TEST_ONLY = "TEST_ONLY";
 var TEST_AND_DEPLOY = "TEST_AND_DEPLOY";
@@ -157,6 +158,17 @@ exports.config = function(req, res) {
         if (err) return r.error("Panels Error", err, res);
           
         out.panels = panels;
+
+        // Let's exclude 'builtins'
+        // TODO : actually address this - there are different types of plugin
+        out.panels = _.omit(out.panels, function(v){
+          return (v.id == "collaborators" ||
+                  v.id == "github" || 
+                  v.id == "webhooks" ||
+                  v.id == "deactivate"
+            )
+        }) 
+
         return res.render('project_config.html', out);
       });
 

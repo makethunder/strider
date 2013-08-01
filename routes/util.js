@@ -45,7 +45,8 @@ var loadPluginPanel = function(p, cb){
   } else if (typeof(p.src) === 'function') {
     p.src(after);
   } else {
-    cb();
+    console.log("Error with plugin? ", p)
+    after(null, p);
   }
 }
 
