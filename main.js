@@ -9,6 +9,7 @@ var app = require('./lib/app')
   , websockets = require('./lib/websockets')
   , pluginTemplates = require('./lib/pluginTemplates')
   , utils = require('./lib/utils')
+  , upgrade = require('./lib/upgrade')
 
   , _ = require('lodash')
 
@@ -91,7 +92,7 @@ module.exports = function(extdir, c, callback) {
   // settings, as well as handles to enable functions to register things.
   // Context can also be accessed as a singleton within Strider as
   // common.context.
-  var context = {
+  var old_context = {
     config: appConfig,
     enablePty: config.enablePty,
     emitter: common.emitter,
@@ -107,49 +108,55 @@ module.exports = function(extdir, c, callback) {
     registerPanel: registerPanel,
     registerBlock: pluginTemplates.registerBlock,
   };
+  var context = {
+    app: app,
+    emitter: common.emitter
+  };
 
-  // Make extension context available throughout application.
-  common.context = context;
-  loader.initWebAppExtensions(extdir, context, appInstance,
-    function(err, initialized, templates) { 
-      if (err) {
-        return cb(err)
-      }
-
-      if (templates){
-        for (var k in templates){
-          pluginTemplates.registerTemplate(k, templates[k]);
+  upgrade(function () {
+    // Make extension context available throughout application.
+    common.context = context;
+    loader.initWebAppExtensions(extdir, context, appInstance,
+      function(err, initialized, templates) { 
+        if (err) {
+          return cb(err)
         }
-      }
-
-      loader.initRunnerExtensions(extdir, context, function(err, loaded){
-        console.log("Environment Runner's loaded:" , loaded)
-        if (!loaded || loaded.length < 1) throw "No EnvironmentRunner Loaded!";
-        // FOR NOW WE JUST USE THE FIRST: TODO - make this selectable.
-        var runner = loaded[0]
-
-        context.loader.listWorkerExtensions(extdir, function(err, workers){
-          common.availableWorkers = workers;
-          workers.forEach(function(x){
-            console.log("Extension", x.id , "available")
-
-            if (common.extensions[x.id] === undefined) {
-              common.extensions[x.id] = x
-            } else {
-              console.log("!!! Multiple extension", x)
-            }
+  
+        if (templates){
+          for (var k in templates){
+            pluginTemplates.registerTemplate(k, templates[k]);
+          }
+        }
+  
+        loader.initRunnerExtensions(extdir, context, function(err, loaded){
+          console.log("Environment Runner's loaded:" , loaded)
+          if (!loaded || loaded.length < 1) throw "No EnvironmentRunner Loaded!";
+          // FOR NOW WE JUST USE THE FIRST: TODO - make this selectable.
+          var runner = loaded[0]
+  
+          context.loader.listWorkerExtensions(extdir, function(err, workers){
+            common.availableWorkers = workers;
+            workers.forEach(function(x){
+              console.log("Extension", x.id , "available")
+  
+              if (common.extensions[x.id] === undefined) {
+                common.extensions[x.id] = x
+              } else {
+                console.log("!!! Multiple extension", x)
+              }
+            })
+  
+            runner.create(context.emitter, {}, function(){
+  
+              // We're all up and running
+              common.availableWorkers = workers
+              app.run(appInstance);
+              cb(err, initialized, appInstance)
+            });
           })
-
-          runner.create(context.emitter, {}, function(){
-
-            // We're all up and running
-            common.availableWorkers = workers
-            app.run(appInstance);
-            cb(err, initialized, appInstance)
-          });
         })
-      })
-
+  
+    });
   });
 
   return appInstance;
