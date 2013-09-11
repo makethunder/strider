@@ -92,7 +92,7 @@ module.exports = function(extdir, c, callback) {
   // settings, as well as handles to enable functions to register things.
   // Context can also be accessed as a singleton within Strider as
   // common.context.
-  var old_context = {
+  var context = {
     config: appConfig,
     enablePty: config.enablePty,
     emitter: common.emitter,
@@ -107,10 +107,7 @@ module.exports = function(extdir, c, callback) {
     registerWorkerMessagePostProcessor: registerWorkerMessagePostProcessor,
     registerPanel: registerPanel,
     registerBlock: pluginTemplates.registerBlock,
-  };
-  var context = {
-    app: app,
-    emitter: common.emitter
+    app: app
   };
 
   upgrade(function () {
