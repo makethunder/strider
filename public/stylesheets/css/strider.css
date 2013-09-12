@@ -828,3 +828,7 @@ body.job_view footer {
     float: left;
   }
 }
+
+.navbar-signin-form .input-small {
+  width: 175px;
+}
