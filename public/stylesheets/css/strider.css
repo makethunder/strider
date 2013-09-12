@@ -829,6 +829,6 @@ body.job_view footer {
   }
 }
 
-.navbar-signin-form .input-small {
+#navbar-signin-form .input-small {
   width: 175px;
 }
