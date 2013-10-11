@@ -371,7 +371,7 @@ app.controller('JobCtrl', ['$scope', '$route', '$location', 'jobs', function ($s
     if ($scope.job.status === 'running')
       return;
 
-    var repoInfo = $scope.repo.short_name.split['/'];
+    var repoInfo = $scope.repo.short_name.split('/');
     var repoOwner = repoInfo[0];
     var repoBranch = repoInfo[1];
     var gitHubCompareUrl = "https://github.com/" + $scope.repo.short_name + "/compare/paperg:" + repoBranch + "..." + repoOwner + ":" + repoBranch;
