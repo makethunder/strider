@@ -373,7 +373,8 @@ app.controller('JobCtrl', ['$scope', '$route', '$location', 'jobs', function ($s
 
     var repoInfo = $scope.repo.short_name.split('/');
     var repoOwner = repoInfo[0];
-    var repoBranch = repoInfo[1];
+    var repoName = repoInfo[1];
+    var repoBranch = "master";  // hopefully we can get this programmatically later
     var gitHubCompareUrl = "https://github.com/" + $scope.repo.short_name + "/compare/paperg:" + repoBranch + "..." + repoOwner + ":" + repoBranch;
     window.open(gitHubCompareUrl, '_blank');
   };
