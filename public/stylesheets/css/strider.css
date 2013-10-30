@@ -25,10 +25,11 @@ body {
   margin-right: 10px;
 }
 #build-page .job-title h3 .test-only-action {
-  color: green;
+  color: #000;
 }
 #build-page .job-title h3 .test-and-deploy-action {
   color: #2900ff;
+  display: none;
 }
 #build-page .job-title h3 .job-tools {
   float: right;
