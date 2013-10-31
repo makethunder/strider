@@ -194,7 +194,6 @@ describe('github', function() {
     });
   });
 
-
   describe('#webhook_extract_latest_commit_info', function() {
     it('should return the correct info from a webhook payload', function() {
       var payload = {
