@@ -199,6 +199,7 @@ describe('github', function() {
     it('should return the correct info from a webhook payload', function() {
       var payload = {
         after: "abcdef",
+        ref: "refs/heads/master",
         commits: [
           {
             author: {
@@ -225,6 +226,7 @@ describe('github', function() {
       extracted.message.should.eql(payload.commits[1].message);
       extracted.timestamp.should.eql(payload.commits[1].timestamp);
       extracted.author.should.eql(payload.commits[1].author);
+      extracted.branch.should.eql('master');
     });
   });
 
