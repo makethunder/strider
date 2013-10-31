@@ -89,6 +89,7 @@ exports.jobs_start = function(req, res) {
       repo_ssh_url = gh.make_ssh_url(project.org, project.repo);
     }
 
+    // TODO: sort out the mess below... will need this for correct depoy behavior
     if (job_type === TEST_ONLY) {
       return jobs.startJob(req.user, repo_config, deploy_config, undefined, repo_ssh_url, job_type, function (job) {
         res.end(JSON.stringify({job: job}));
