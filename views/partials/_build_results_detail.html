@@ -9,13 +9,13 @@
       <div class='row-fluid'>
         <div class='span6'>
           <div class='repo-branch'>
-            <strong>Branch:</strong>
-            <a href="[[ job.repo_url ]]">master</a>
+            <strong>Branch: </strong>
+            <a href="[[ job.repo_url ]]/tree/[[ job.commit.branch ]]">[[ job.commit.branch ]]</a>
           </div>
         </div>
         <div class='span6'>
           <div id="commit-id">
-            <strong>Commit-ID:</strong>
+            <strong>Commit-ID: </strong>
             <a href="[[ job.commit.url ]]">[[ job.commit.id ]]</a>
           </div>
         </div>
@@ -32,13 +32,13 @@
   <div class='row-fluid' ng-switch-default>
      <div class='span6'>
        <div id="repo-branch">
-         <strong>Branch:</strong>
-         <a href="[[ job.repo_url ]]">master</a>
+         <strong>Branch: </strong>
+         <a href="[[ job.repo_url ]]/tree/[[ job.commit.branch ]]">[[ job.commit.branch ]]</a>
        </div>
     </div>
     <div class='span6'>
       <div id="commit-id">
-        <strong>Job:</strong> 
+        <strong>Job: </strong> 
         <a href="[[ job.url ]]">[[ job.id ]]</a>
        </div>
     </div>

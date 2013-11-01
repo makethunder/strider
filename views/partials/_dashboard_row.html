@@ -12,14 +12,14 @@
     <i ng-switch-when="running" class="icon-cog icon-spin"></i>
     <i ng-switch-when="submitted" class="icon-cog icon-spin"></i>
     <i ng-switch-when="failed" class="icon-exclamation-sign failure-text"></i>
-    <span>[[ job.id.substr(0,8) ]]</span>
+    <span>[[ job.commit.branch ]]</span>
   </a>
   <span ng-switch-when="true" ng-switch="job.status">
     <i ng-switch-when="succeeded" class="icon-check-sign success-text"></i>
     <i ng-switch-when="running" class="icon-cog icon-spin"></i>
     <i ng-switch-when="submitted" class="icon-cog icon-spin"></i>
     <i ng-switch-when="failed" class="icon-exclamation-sign failure-text"></i>
-    <span>[[ job.id.substr(0,8) ]]</span>
+    <span>[[ job.commit.branch ]]</span>
   </span>
 </td>
 <td class="refresh" ng-hide="page === 'build'">
@@ -65,7 +65,7 @@
   </a>
 </td>
 <td class="github-link" ng-hide="page === 'build'">
-  <a href="[[ job.repo_url ]]" target="_blank">
+  <a href="[[ job.repo_url ]]/tree/[[ job.commit.branch ]]" target="_blank">
     <i class="icon-github"></i>
   </a>
 </td>
