@@ -36,7 +36,7 @@
     "swig": "git+https://github.com/peterbraden/swig",
     "cookie": "0.0.5",
     "socket.io": "~0.9.13",
-    "strider-paperg-worker": "git+https://github.com/vasili-zolotov/strider-paperg-worker",
+    "strider-simple-worker": "git+https://github.com/vasili-zolotov/strider-simple-runner#paperg",
     "lodash": "~1.3.1"
   },
   "devDependencies": {
