@@ -26,9 +26,30 @@ var  _ = require('underscore')
 exports.job = function(req, res)
 {
   res.statusCode = 200;
-  var org = req.params.org
-    , repo = req.params.repo
-    , repo_url = req.repo_url
+ 
+  var user = req.params.user;
+  var org = req.params.org;
+  var repo = req.params.repo;
+  var repo_url = "https://github.com/" + org + "/" + repo;
+
+  Job.findOne()
+    .sort({'finished_timestamp': -1})
+    .where('finished_timestamp').ne(null)
+    .where('archived_timestamp', null)
+    .where('repo_url', repo_url.toLowerCase()) // TODO: is it always lowercase? BUG?
+    .where('_owner', user)
+    .where('type').in(['TEST_ONLY','TEST_AND_DEPLOY'])
+    .exec(function(err, job) {
+      if (err || !job) {
+        if (err) {
+          res.statusCode = 500;
+          res.end("error: " +  err);
+          console.debug('[builds] error retrieving job object', err.message);
+          return;
+        }
+      }
+      // do stuff with job
+    });
 
   // XXX do we already look this up in requireReadAccess?
   ljobs.lookup(req.repo_url, function(err, repo_config) {

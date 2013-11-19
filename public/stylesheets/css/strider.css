@@ -31,8 +31,13 @@ body {
   color: #2900ff;
   display: none;
 }
-#build-page .job-title h3 .job-tools {
-  float: right;
+#build-page .job-title h3 .pull-request {
+  display: inline-block;
+  top: 5px;
+}
+#build-page .job-title h3 .pull-request .dropdown-menu {
+  font-size: 16px;
+  max-width: 300px;
 }
 #build-page #build-metadata {
   border-radius: 5px;
@@ -788,7 +793,7 @@ body.job_view .body-content {
 body.job_view .job-left-col,
 body.job_view .job-detail-sidebar {
   position: absolute;
-  top: 30px;
+  top: 40px;
   bottom: 10px;
   overflow-y: auto;
   overflow-x: visible;
@@ -838,4 +843,24 @@ body.job_view footer {
 
 #navbar-signin-form .input-small {
   width: 175px;
+}
+
+
+body.job_view .job-repo-buttons {
+  display: inline-block; 
+  margin-right: 10px;
+}
+
+body.job_view .icon-wrench {
+  color: #aaa;
+}
+body.job_view .icon-wrench:hover {
+  color: #999;
+}
+
+body.job_view button i {
+  margin-right: 3px;
+}
+body.job_view button .caret {
+  margin-left: 3px;
 }

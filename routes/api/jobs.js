@@ -48,7 +48,7 @@ exports.jobs_start = function(req, res) {
   if (url === undefined) {
     return;
   }
-
+  
   // Default job type is TEST_AND_DEPLOY but this can be overridden
   // via the "type" query parameter.
   var job_type = req.param("type");
@@ -62,6 +62,8 @@ exports.jobs_start = function(req, res) {
   } else {
     job_type = found;
   }
+
+  var branch = req.param('branch') || 'master';
 
   req.user.get_repo_config(url, function(err, repo_config, access_level, origin_user_obj) {
     if (err || !repo_config) {
@@ -88,15 +90,19 @@ exports.jobs_start = function(req, res) {
       project = gh.parse_github_url(repo_config.display_url);
       repo_ssh_url = gh.make_ssh_url(project.org, project.repo);
     }
+    
+    // create a fake git commit strucutre
+    // TODO: would be better to query github and construct a real one
+    var github_commit_info = { 'branch': branch };
 
     // TODO: sort out the mess below... will need this for correct depoy behavior
     if (job_type === TEST_ONLY) {
-      return jobs.startJob(req.user, repo_config, deploy_config, undefined, repo_ssh_url, job_type, function (job) {
+      return jobs.startJob(req.user, repo_config, deploy_config, github_commit_info, repo_ssh_url, job_type, function (job) {
         res.end(JSON.stringify({job: job}));
       });
     }
     if (!repo_config.has_prod_deploy_target) {
-      return jobs.startJob(req.user, repo_config, undefined, undefined, repo_ssh_url, job_type, function (job) {
+      return jobs.startJob(req.user, repo_config, undefined, github_commit_info, repo_ssh_url, job_type, function (job) {
         res.end(JSON.stringify({job: job}));
       });
     }
@@ -105,7 +111,7 @@ exports.jobs_start = function(req, res) {
     var deploy_config = _.find(req.user[deploy_config_key], function(item) {
       return item.account_id === repo_config.prod_deploy_target.account_id;
     });
-    return jobs.startJob(req.user, repo_config, deploy_config, undefined, repo_ssh_url, job_type, function (job) {
+    return jobs.startJob(req.user, repo_config, deploy_config, github_commit_info, repo_ssh_url, job_type, function (job) {
       res.end(JSON.stringify({job: job}));
     });
   });

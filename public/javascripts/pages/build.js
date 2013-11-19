@@ -261,7 +261,7 @@ app.controller('JobCtrl', ['$scope', '$route', '$location', 'jobs', function ($s
     , lastRoute = $route.current;
 
   setJob(project, params.id);
-
+  
   $scope.repo = repo;
 
   $scope.sortDate = function (item) {
@@ -290,6 +290,11 @@ app.controller('JobCtrl', ['$scope', '$route', '$location', 'jobs', function ($s
       if (err) {
         return showError('Failed to fetch job');
       }
+      
+      // populate branch list
+      var branches = jobs.getCache(project).list.map(function(elem) { return elem.commit.branch; }); 
+      $scope.branches = branches.filter(function(elem, pos, self) { return self.indexOf(elem) == pos; });
+      
       if (jobid && job.id !== jobid) return;
       jobid = job.id;
       $scope.job = job;
@@ -308,6 +313,7 @@ app.controller('JobCtrl', ['$scope', '$route', '$location', 'jobs', function ($s
       }
     });
   }
+    
   
   // shared templates ; need to know what to show
   $scope.page = 'build';
@@ -367,39 +373,42 @@ app.controller('JobCtrl', ['$scope', '$route', '$location', 'jobs', function ($s
   document.addEventListener('keydown', switchBuilds);
 
   // button handlers
-  $scope.startReview = function () {
-    if ($scope.job.status === 'running')
+  $scope.startReview = function (branch) {
+    // TODO: why is this not allowed in the first place?
+    if ($scope.job.status === 'running' && $scope.job.commit.branch == branch)
       return;
 
     var repoInfo = $scope.repo.short_name.split('/');
     var repoOwner = repoInfo[0];
     var repoName = repoInfo[1];
-    var repoBranch = "master";  // hopefully we can get this programmatically later
-    var gitHubCompareUrl = "https://github.com/" + $scope.repo.short_name + "/compare/paperg:" + repoBranch + "..." + repoOwner + ":" + repoBranch;
+    var repoBranch = branch;
+    // TODO: for now assuming target repo:branch is always paperg:master. This is not always going to be the case (e.g. backports)
+    var gitHubCompareUrl = "https://github.com/" + $scope.repo.short_name + "/compare/paperg:master" + "..." + repoOwner + ":" + repoBranch;
     window.open(gitHubCompareUrl, '_blank');
   };
 
-  $scope.startTest = function () {
+  $scope.startTest = function (branch) {
     if ($scope.job.status === 'running' ||
         $scope.job.status === 'submitted') return;
-    startJob($scope.job.repo_url, 'TEST_ONLY');
+    startJob($scope.job.repo_url, 'TEST_ONLY', branch);
+    $scope.job = {
+      repo_url: $scope.job.repo_url,
+      commit: { 'branch': branch },
+      status: 'submitted',
+      output: ''
+    };
+  };
+  $scope.startDeploy = function (branch) {
+    if ($scope.job.status === 'running' ||
+        $scope.job.status === 'submitted') return;
+    startJob($scope.job.repo_url, 'TEST_AND_DEPLOY', branch);
     $scope.job = {
       repo_url: $scope.job.repo_url,
       status: 'submitted',
       output: ''
     };
   };
-  $scope.startDeploy = function () {
-    if ($scope.job.status === 'running' ||
-        $scope.job.status === 'submitted') return;
-    startJob($scope.job.repo_url, 'TEST_AND_DEPLOY');
-    $scope.job = {
-      repo_url: $scope.job.repo_url,
-      status: 'submitted',
-      output: ''
-    };
-  };
-
+  
   // Socket update stuff
   var console = document.querySelector('pre.console-output');
 
@@ -475,8 +484,8 @@ app.controller('JobCtrl', ['$scope', '$route', '$location', 'jobs', function ($s
   });
 }]);
 
-function startJob(url, job_type, next) {
-  var data = {url:url, type:job_type};
+function startJob(url, job_type, branch, next) {
+  var data = { url:url, type:job_type, branch:branch };
   setFavicon('running');
 
   $.ajax("/api/jobs/start", {

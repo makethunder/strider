@@ -12,33 +12,45 @@
   <div id="build-page" class="main" ng-view></div>
   <script id="build-tpl.html" type="text/ng-template">
     <div class="row-fluid job-page-intro">
-      <div class="span11 job-title">
+      <div class="span12 job-title">
         {% pluginblock JobPagePreTitle %}{% endpluginblock %}
         <h3>
           <a href="[[ job.repo_url ]]" target="_blank">
             <span class='job-repo'>{{org}}/{{repo}}</span>
           </a>
+          <div class="job-repo-buttons">
+            <span class="btn-group pull-request">
+              <button class="btn btn-primary" ng-click="startTest(job.commit.branch);" title="Run Tests"><i class="icon-off"></i> Test </button>
+              <button class="btn dropdown-toggle btn-primary" data-toggle="dropdown">
+                [[ job.commit.branch ]] <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu">
+                <a ng-click="startTest(branch);" ng-repeat="branch in branches">[[ branch ]]</a>
+              </ul>
+            </span>
+          
+            <span class="btn-group pull-request">
+              <button class="btn [[ job.success && 'btn-success' || 'btn-danger' ]]" 
+                ng-click="startReview(job.commit.branch);" title="Create Pull Request"><i class="icon-code-fork icon-rotate-180"></i> Merge </button>
+              <button class="btn dropdown-toggle [[ job.success && 'btn-success' || 'btn-danger' ]]" data-toggle="dropdown">
+                [[ job.commit.branch ]] <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu">
+                <a ng-click="startReview(branch);" ng-repeat="branch in branches">[[ branch ]]</a>
+              </ul>
+            </span>
+          </div>
+          
+          <a href="/[[ job.project_name ]]/config" ng-hide="repo.access_level < 1" title="Configure">
+            <i class="icon-wrench"></i>
+          </a>  
+          
           <span ng-show="!job.running && repo.access_level > 0"
-                ng-click="startReview(job)"
-                title="Create Pull Request"
-                class="clickable">
-            <i class="icon-share"></i>
+                ng-click="startDeploy(job)"
+                title="Retest &amp; Deploy"
+                class="clickable test-and-deploy-action">
+            <i class="icon-cloud-upload"></i>
           </span>
-          <div class="job-tools">
-	          <span ng-show="!job.running && repo.access_level > 0"
-	                ng-click="startDeploy(job)"
-	                title="Retest &amp; Deploy"
-	                class="clickable test-and-deploy-action">
-	            <i class="icon-cloud-upload"></i>
-	          </span>
-	          <span ng-hide="job.running || repo.access_level < 1" ng-click="startTest(job)"
-	                title="Retest" class="clickable test-only-action">
-	            <i class="icon-refresh"></i>
-	          </span>
-	          <a href="/[[ job.project_name ]]/config" ng-hide="repo.access_level < 1" title="Configure">
-	            <i class="icon-wrench"></i>
-	          </a>	
-          </div>	  
         </h3>
         {% pluginblock JobPagePostTitle %}{% endpluginblock %}
       </div>
