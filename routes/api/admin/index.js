@@ -52,14 +52,14 @@ exports.admin_jobs_status = function(req, res) {
       console.debug("Querying for last 100 jobs across the system");
       if (req.param("limit_by_user")) {
         Job.find()
-          .sort({'finished_timestamp': -1})
+          .sort({'created_timestamp': -1})
           .where("_owner",req.param("limit_by_user"))
           .populate("_owner")
           .limit(100)
           .exec(this);
       } else {
         Job.find()
-          .sort({'finished_timestamp': -1})
+          .sort({'created_timestamp': -1})
           .populate("_owner")
           .limit(100)
           .exec(this);
@@ -73,8 +73,8 @@ exports.admin_jobs_status = function(req, res) {
       var repo_list = this.repo_list;
       _.each(results, function(job) {
 
-        var duration = Math.round((job.finished_timestamp - job.created_timestamp)/1000);
-        var finished_at = humane.humaneDate(job.finished_timestamp);
+        var duration = Math.round(((job.finished_timestamp || new Date()) - job.created_timestamp)/1000);
+        var finished_at = job.finished_timestamp? humane.humaneDate(job.finished_timestamp) : 'Still Running';
 
         // if it is an orphan job - user doesn't exist anymore - then skip
         if (job._owner == undefined) {
@@ -116,6 +116,7 @@ exports.admin_jobs_status = function(req, res) {
           type: job.type,
           created_timestamp: job.created_timestamp,
           finished_timestamp: job.finished_timestamp,
+          branch: job.github_commit_info.branch
         }
         l.push(obj);
       });
