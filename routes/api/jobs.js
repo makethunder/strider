@@ -189,7 +189,7 @@ exports.repo_jobs = function(req, res) {
   res.setHeader('Content-type', 'application/json');
   ljobs.lookup(repo_url, function (err, repo_config) {
     Job.find()
-      .sort({'finished_timestamp': -1})
+      .sort({'created_timestamp': -1})
       .where('repo_url', repo_url.toLowerCase())
       .where('archived_timestamp', null)
       .where('type').in(['TEST_ONLY','TEST_AND_DEPLOY'])
