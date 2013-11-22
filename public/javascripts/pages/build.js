@@ -374,10 +374,6 @@ app.controller('JobCtrl', ['$scope', '$route', '$location', 'jobs', function ($s
 
   // button handlers
   $scope.startReview = function (branch) {
-    // TODO: why is this not allowed in the first place?
-    if ($scope.job.status === 'running' && $scope.job.commit.branch == branch)
-      return;
-
     var repoInfo = $scope.repo.short_name.split('/');
     var repoOwner = repoInfo[0];
     var repoName = repoInfo[1];
@@ -388,8 +384,6 @@ app.controller('JobCtrl', ['$scope', '$route', '$location', 'jobs', function ($s
   };
 
   $scope.startTest = function (branch) {
-    if ($scope.job.status === 'running' ||
-        $scope.job.status === 'submitted') return;
     startJob($scope.job.repo_url, 'TEST_ONLY', branch);
     $scope.job = {
       repo_url: $scope.job.repo_url,
