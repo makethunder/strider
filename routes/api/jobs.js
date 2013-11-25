@@ -118,7 +118,7 @@ exports.jobs_start = function(req, res) {
 };
 
 /*
- * GET /api/jobs/:id
+ * GET /api/job/:id
  * Return the merged output
  */
 exports.raw = function(req, res) {
