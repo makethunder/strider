@@ -100,6 +100,32 @@ function addUser(email, password, admin) {
   }
 }
 
+function resetPassword(email, password) {
+  User = require('../lib/models').User;
+ 
+  if (password === undefined || password === '' ) { 
+    console.log("No empty passwords.");
+    process.exit(1);
+  }
+  
+  connect();
+  User.findOne({ email: email }, function(err, user) {
+    console.log('User: %s', email);
+    if (err || !user) {
+      console.log("Error Finding User:" + err);
+      process.exit(2);
+    }
+    user.set('password', password);
+    user.save(function(err, user){
+      if (err) {
+        console.log("Error Saving User:" + err);
+        process.exit(3);
+      }
+      console.log("Password set.");
+      process.exit(0);
+    })
+  });
+}
 
 var start = function(extpath){
   var common = require('../lib/common');
@@ -146,7 +172,21 @@ parser.command('addUser')
   .callback(function(opts){
     addUser(opts.email, opts.password, opts.admin);
   })
-  .help("Create a Strider user")
+  .help("Create a Strider user");
+  
+parser.command('resetPassword')
+  .option('email', {
+      abbr: 'l'
+    , help: "User's email"
+  })
+  .option('password', {
+      abbr: 'p'
+    , help: "New password"
+  })
+  .callback(function(opts){
+    resetPassword(opts.email, opts.password);
+  })
+  .help("Reset strider user password")
 
 parser.nocommand('start')
   .option('extension_path', {
