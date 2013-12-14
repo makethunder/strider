@@ -151,7 +151,7 @@ exports.config = function(req, res) {
          // May be undefined if not configured
          display_name: wrepo_config.display_name,
          badge_url: config.strider_server_name + '/' + req.user.id + '/' + req.params.org + '/' + req.params.repo + '/badge',
-         view_url: config.strider_server_name + '/' + req.params.org + '/' + req.params.repo,
+         view_url: config.strider_server_name + '/' + req.params.org + '/' + req.params.repo + '/',
          repo: wrepo_config,
          repo_org: req.params.org,
          repo_name: req.params.repo,
