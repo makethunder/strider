@@ -2,6 +2,7 @@
 
 import os
 import shutil
+import commands
 
 FREE_TARGET_GB = 50
 ROOT_DIR = '/home/strider/.strider'
@@ -26,5 +27,7 @@ while get_free() < FREE_TARGET_GB and len(dirs) > 0:
   print 'Free space (GB): %s < Target (GB): %s ' % (get_free(), FREE_TARGET_GB)
   path = dirs[0][0]
   dirs = dirs[1:]
-  print 'Removing: ', path
+  print 'Removing:', path
+  status, output = commands.getstatusoutput('cd %s && vagrant destroy -f' % path)
+  print 'Vagrant: ', output
   shutil.rmtree(path)
