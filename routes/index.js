@@ -246,7 +246,6 @@ function preparePanel(panel, next) {
 }
 
 function handleWebhook(repo, user, payload) {
-  console.debug("Processing webhook payload: %j", payload);
   var github_commit_id = payload.after;
   var github_commit_info = gh.webhook_extract_latest_commit_info(payload);
   var repo_ssh_url;
