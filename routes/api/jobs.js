@@ -193,7 +193,7 @@ exports.repo_jobs = function(req, res) {
       .where('repo_url', repo_url.toLowerCase())
       .where('archived_timestamp', null)
       .where('type').in(['TEST_ONLY','TEST_AND_DEPLOY'])
-      .limit(20)
+      .limit(50)
       .populate("_owner")
       .lean(true)
       .exec(function (err, jobs) {
