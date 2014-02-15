@@ -1,0 +1,11 @@
+service: strider
+
+aws.paperg.com:
+ www:
+  stack: node
+  daemon: node bin/strider
+  env:
+    DB_URI: 'mongodb://localhost:27017/strider-foss'
+    SERVER_NAME: 'http://www.zolotov.paperg-ci.aws.paperg.com:5000'
+  docker:
+    'brice/mongo': { port: 27017 }
