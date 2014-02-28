@@ -13,10 +13,11 @@ while True:
 
   dirs = []
   for user in os.listdir(ROOT_DIR):
-    for branch in os.listdir(os.path.join(ROOT_DIR, user)):
-		  path = os.path.join(ROOT_DIR,user,branch)
-		  info = os.stat(path)
-		  dirs.append((path,info))
+    if os.path.isdir(os.path.join(ROOT_DIR, user)):
+      for branch in os.listdir(os.path.join(ROOT_DIR, user)):
+        path = os.path.join(ROOT_DIR,user,branch)
+        info = os.stat(path)
+        dirs.append((path,info))
   dirs.sort(key = lambda d: d[1].st_mtime)
 
   print 'Cache directory count: ', len(dirs)
