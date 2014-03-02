@@ -9,6 +9,7 @@ aws.paperg.com:
     env:
       PORT: 5000
       DB_URI: mongodb://db:27017/strider
+      #
       # This config section must match your github app key and the FQDN of your box.
       # You can ignore this config if you don't care to receive webhook notifications.
       # See: https://github.com/settings/applications/new
@@ -18,7 +19,8 @@ aws.paperg.com:
       #   http://www.my-host-name.strider.aws.paperg.com:5000/auth/github/callback
       # SERVER_NAME: http://www.my-host-name.strider.aws.paperg.com:5000
       # PLUGIN_GITHUB_APP_ID: xxxxx
-      # PLUGIN_GITHUB_APP_SECRET: xxxxx            
+      # PLUGIN_GITHUB_APP_SECRET: xxxxx   
+      #
     cmd:
       - node bin/strider addUser --email ci@paperg.com --password paperg123 --admin true
     daemon: node bin/strider
