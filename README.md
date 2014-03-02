@@ -1,3 +1,53 @@
+#Install g-box
+
+This will make sure your g-box is at the latest version. You will be prompted to sign in to github.
+
+```
+npm install -g git+https://github.com/paperg/g-box.git
+```
+
+#Deploy!
+
+This step will bootstrap g-box to the repo. It's a one-time thing.
+
+```
+box init
+```
+
+Now deploy!  
+
+```
+box go --verbose
+```
+
+This will take a while, but only the first time. Just like `git clone`. The `--verbose` part is optional. Also, optionally, see http://screencast.com/t/2ruB1gGLm5 for instructions on editing the `Boxfile` to receive github webhook notifications.
+
+To update the appplication server with local changes:
+
+```
+box www go
+```
+
+To reset the database:
+
+```
+box db go
+```
+
+When you are done working with your strider:
+
+```
+box stop
+```
+
+When you are completely done:
+
+```
+box destroy
+```
+
+=====
+
 # ![Strider](https://raw.github.com/Strider-CD/strider/master/public/images/top_github.png)
 
 [![Build Status](http://public-ci.stridercd.com/Strider-CD/strider/badge)](https://public-ci.stridercd.com/Strider-CD/strider)
