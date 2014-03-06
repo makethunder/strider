@@ -1,6 +1,6 @@
 # You can launch a new instance of this app using 'box go' command.
 # Use 'box go --verbose' for debugging information.
-aws.paperg.com:
+dev.paperg.com:
   db:
     docker:
       'brice/mongo': { ports: 27017 }
@@ -16,8 +16,8 @@ aws.paperg.com:
       # Tutorial: http://screencast.com/t/2ruB1gGLm5
       # The callback URL is: /auth/github/callback.
       # So for the example below authorization callback URL is 
-      #   http://www.my-host-name.strider.aws.paperg.com:5000/auth/github/callback
-      # SERVER_NAME: http://www.my-host-name.strider.aws.paperg.com:5000
+      #   http://www.my-host-name.strider.dev.paperg.com:5000/auth/github/callback
+      # SERVER_NAME: http://www.my-host-name.strider.dev.paperg.com:5000
       # PLUGIN_GITHUB_APP_ID: xxxxx
       # PLUGIN_GITHUB_APP_SECRET: xxxxx   
       #
