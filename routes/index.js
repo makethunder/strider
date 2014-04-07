@@ -2,7 +2,7 @@
  * routes/index.js
  */
 
-var BASE_PATH = "../lib/"
+var BASE_PATH = "../lib/";
 
 var _ = require('underscore')
   , Step = require('step')
@@ -250,6 +250,10 @@ function handleWebhook(repo, user, payload) {
   var github_commit_info = gh.webhook_extract_latest_commit_info(payload);
   var repo_ssh_url;
   var repo_metadata;
+  // don't test: deleted branches
+  if (payload.deleted === true) {
+    return;
+  }
   if (user.github.id) {
     repo_metadata = _.find(user.github_metadata[user.github.id].repos, function(item) {
       return repo.url == item.html_url.toLowerCase();
