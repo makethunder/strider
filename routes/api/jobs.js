@@ -134,9 +134,9 @@ exports.raw = function(req, res) {
          return err();
        }
        function gotRepo(err, r) {
-         if (err || !r) {
+         /*if (err || !r) {
            return error();
-         }
+         }*/
          res.setHeader('Content-type', 'text/plain');
          res.send(job.stdmerged ? filter(job.stdmerged) : '');
        }
