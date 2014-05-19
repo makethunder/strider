@@ -133,7 +133,7 @@ exports.raw = function(req, res) {
        if (err || !job) {
          return err();
        }
-       function gotRepo() {
+       function gotRepo(err, r) {
          if (err || !r) {
            return error();
          }
