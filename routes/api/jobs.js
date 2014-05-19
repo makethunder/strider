@@ -131,24 +131,24 @@ exports.raw = function(req, res) {
      .lean(true)
      .exec(function (err, job) {
        if (err || !job) {
-         return err()
+         return err();
        }
        function gotRepo(err, r) {
          if (err || !r) {
-           return err()
+           return err();
          }
          res.setHeader('Content-type', 'text/plain');
          res.send(job.stdmerged ? filter(job.stdmerged) : '');
        }
        if (req.user) {
          userId = req.user._id;
-         req.user.get_repo_config(job.repo_url, gotRepo)
+         req.user.get_repo_config(job.repo_url, gotRepo);
        } else {
          User.findOne({"github_config":{$elemMatch:{
            "url":job.repo_url.toLowerCase(),
            "public": true
          }}}, gotRepo
-         )
+         );
        }
   });
 };
