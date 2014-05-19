@@ -133,10 +133,7 @@ exports.raw = function(req, res) {
        if (err || !job) {
          return err();
        }
-       function gotRepo(err, r) {
-         /*if (err || !r) {
-           return error();
-         }*/
+       function gotRepo() {
          res.setHeader('Content-type', 'text/plain');
          res.send(job.stdmerged ? filter(job.stdmerged) : '');
        }
