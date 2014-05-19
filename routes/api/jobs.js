@@ -122,10 +122,6 @@ exports.jobs_start = function(req, res) {
  * Return the merged output
  */
 exports.raw = function(req, res) {
-  function error() {
-         res.statusCode = 404;
-         return res.send("Job not found");
-  }
 
   Job.findById(req.params.id)
      .lean(true)
@@ -133,10 +129,7 @@ exports.raw = function(req, res) {
        if (err || !job) {
          return err();
        }
-       function gotRepo(err, r) {
-         if (err || !r) {
-           return error();
-         }
+       function gotRepo() {
          res.setHeader('Content-type', 'text/plain');
          res.send(job.stdmerged ? filter(job.stdmerged) : '');
        }
