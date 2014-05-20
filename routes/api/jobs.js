@@ -153,7 +153,7 @@ function killOldJobs(job) {
   // anything older than 1 hour that hasn't ended is pronounced hanged
   if (new Date().getTime() - job.created_timestamp.getTime() > 60 * 60 * 1000) {
     console.log('killing old job', job.repo_url, job._id);
-    var msg = '\r\n\u001b[35m[STRIDER]\u001b[0m job timeout after 10 minutes\r\n';
+    var msg = '\r\n\u001b[35m[STRIDER]\u001b[0m job timeout after 1 hour.\r\n';
     var data = {
       test_exitcode: 200,
       stderr: (job.stderr || '') + msg,
