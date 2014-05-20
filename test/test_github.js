@@ -74,8 +74,8 @@ describe('github', function() {
         response.should.eql(tresponse);
         data.should.eql(tdata);
       };
-      github.api_call('/user/repo', 'TEST_TOKEN', testcb, stub);
-      sinon.sandbox.restore();
+      github.api_call('/user/repo', 'TEST_TOKEN', testcb, request);
+      stub.restore();
     });
     it('should return null data on non-200 status code or other error', function() {
       var stub = sinon.sandbox.stub(request, 'get');
@@ -88,7 +88,7 @@ describe('github', function() {
         response.should.eql(tresponse);
         assert(!data);
       };
-      github.api_call('/user/repo', 'TEST_TOKEN', testcb, stub);
+      github.api_call('/user/repo', 'TEST_TOKEN', testcb, request);
       terror = ["an error"];
       stub.callsArgWith(1, terror, tresponse, JSON.stringify(tdata));
       testcb = function(error, response, data) {
@@ -96,8 +96,8 @@ describe('github', function() {
         response.should.eql(tresponse);
         assert(!data);
       };
-      github.api_call('/user/repo', 'TEST_TOKEN', testcb, stub);
-      sinon.sandbox.restore();
+      github.api_call('/user/repo', 'TEST_TOKEN', testcb, request);
+      stub.restore();
     });
   });
 

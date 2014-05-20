@@ -78,23 +78,24 @@ describe('api', function() {
       api_account.account_email(req, res);
 
       res.statusCode.should.eql(400);
-
     });
     it('should set user email if valid', function(done) {
       var req = {
         params: {
-          email:"testemail@example.com"
+          email: "testemail@example.com"
         },
         param: function(key) {
-          return this.params[key]
+          return req.params[key]
         },
       };
-      req.user = {email:"BAD"};
+      req.user = { email: "BAD" };
       req.user.save = function() {
         req.user.email.should.eql(req.params.email);
         done();
       };
-      var res = {end:function() {}};
+      var res = { end: function(data) {
+        data.should.eql(JSON.stringify({status:"ok", errors:[]}));
+      } };
       api_account.account_email(req, res);
 
     });

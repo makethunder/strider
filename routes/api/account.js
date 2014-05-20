@@ -6,7 +6,7 @@ var BASE_PATH = '../../lib/';
 
 var _ = require('underscore')
   , crypto = require('crypto')
-  , check = require('validator').check
+  , validator = require('validator')
   , Step = require('step')
 
   , auth = require(BASE_PATH + 'auth')
@@ -56,12 +56,11 @@ exports.account_password = function(req, res)
  */
 exports.account_email = function(req, res)
 {
-
-  var new_email;
-  try {
-    new_email = req.param('email');
-    check(new_email).isEmail();
-  } catch (e) {
+  var new_email = req.param('email');
+  var isValid = validator.isEmail(new_email);
+  
+  // reject invalid emails
+  if (!isValid) {
     res.statusCode = 400;
     res.end(JSON.stringify({status:"error",
         errors:[{"message":"email is invalid"}]}));
