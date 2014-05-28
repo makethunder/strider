@@ -6,9 +6,15 @@ import os
 import shutil
 import commands
 import time
+from sys import stdout
 
 FREE_TARGET_GB = 50
 ROOT_DIR = '/home/strider/.strider'
+
+
+status, output = commands.getstatusoutput('env')
+print('Environment: \n%s' % output)
+stdout.flush()
 
 while True:
   print 'Walking: ' + ROOT_DIR
@@ -39,5 +45,6 @@ while True:
     status, output = commands.getstatusoutput('cd %s && vagrant destroy -f' % path)
     print 'Vagrant: ', output
     shutil.rmtree(path)
-  
+
+  stdout.flush()  
   time.sleep(300)
