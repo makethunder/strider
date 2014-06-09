@@ -226,6 +226,10 @@ describe('github', function() {
       extracted.timestamp.should.eql(payload.commits[1].timestamp);
       extracted.author.should.eql(payload.commits[1].author);
       extracted.branch.should.eql('master');
+
+      payload.ref = "refs/heads/branch/name";
+      extracted = github.webhook_extract_latest_commit_info(payload);
+      extracted.branch.should.eql('branch/name');
     });
   });
 
