@@ -190,7 +190,10 @@ exports.repo_jobs = function(req, res) {
       .populate("_owner")
       .lean(true)
       .exec(function (err, jobs) {
-        if (err) return res.send('{"error": "Failed to retrieve jobs"}');
+        if (err) {
+          res.statusCode = 500;
+          return res.send('{"error": "Failed to retrieve jobs due to: ' + err + '}');
+        }
         return res.send(JSON.stringify({
           project: org + '/' + repo,
           jobs: jobs.map(function(job) {
