@@ -243,7 +243,11 @@ exports.jobs = function(req, res) {
         });
       },
       function processAndRender (err, results) {
-        if (err) throw err;
+        if (err) {
+          console.log('processAndRender', err);
+          res.send(500, err);
+          return;
+	};
         // this whole block is repeated code with admin_jobs_status, should be moved to function or method
         var l = [];
         var repo_list = this.repo_list;
