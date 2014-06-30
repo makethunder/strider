@@ -8,7 +8,7 @@ import commands
 import time
 from sys import stdout
 
-FREE_TARGET_GB = 50
+FREE_TARGET_GB = 100
 ROOT_DIR = '/home/strider/.strider'
 
 
