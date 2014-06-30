@@ -46,5 +46,7 @@ while True:
     print 'Vagrant: ', output
     shutil.rmtree(path)
 
-  stdout.flush()  
-  time.sleep(300)
+  stdout.flush()
+
+  # Run at most once every 3H
+  time.sleep(10800)
