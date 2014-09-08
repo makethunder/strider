@@ -157,33 +157,6 @@ describe('heroku', function() {
   });
 
   // Mocked integration test.
-  describe("#setup_account_integration()", function() {
-    it('should correctly set the SSH key and persist details in the user object', function(done) {
-      this.timeout(20000);
-      var user_obj = {github:{login:"testUser"}, heroku: [], save: function(cb) {cb(null, this)}};
-      var monkey_request = mockrequest.mock({
-        protocol: "https",
-        host: "api.heroku.com"
-      })
-        .post('/user/keys?')
-        .respond(200)
-        .run();
-      var heroku = sandboxed_module.require('../lib/heroku.js', {
-        requires: {'request':monkey_request}
-      });
-
-      heroku.setup_account_integration(user_obj, TEST_USER_API_KEY, function(err, user_obj) {
-        user_obj.heroku[0].api_key.should.eql(TEST_USER_API_KEY);
-        user_obj.heroku[0].pubkey.length.should.be.above(0);
-        user_obj.heroku[0].privkey.length.should.be.above(0);
-        user_obj.heroku[0].account_id.should.match(/^.*@.*$/);
-        done();
-      });
-    });
-
-  });
-
-  // Mocked integration test.
   describe("#setup_delivery_integration()", function() {
     it('should correctly set the SSH key and persist details in the user object', function(done) {
       this.timeout(5000);

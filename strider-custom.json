@@ -1,0 +1,3 @@
+{
+  "test": "npm install && make test"
+}
