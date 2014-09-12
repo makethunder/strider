@@ -27,9 +27,9 @@ var TEST_AND_DEPLOY = "TEST_AND_DEPLOY";
  */
 
 exports.index = function(req, res){
-  if (req.loggedIn == false){
+  if (req.loggedIn === false){
   }
-  if (req.session.return_to != null) {
+  if (req.session && req.session.return_to !== undefined) {
     var return_to = req.session.return_to;
     req.session.return_to=null;
     res.redirect(return_to);
