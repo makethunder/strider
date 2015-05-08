@@ -6,7 +6,6 @@ import os
 import shutil
 import commands
 import time
-import stat
 from sys import stdout
 
 FREE_TARGET_GB = 50
@@ -38,13 +37,9 @@ while True:
     stats = os.statvfs(ROOT_DIR)
     return stats.f_bavail * stats.f_bsize / pow(1024,3)
 
+  #The callback executed when shutil methods fail to run successfully
   def onerror(func, path, exc_info):
-    if not os.access(path, os.W_OK):
-      print "NOTICE: Making rwx available to perform operation. Path = %s" % path
-      os.chmod(path, stat.S_IRWXU)
-      func(path)
-    else:
-      raise
+    print "ERROR: Cannot remove '%s' Check path permissions" % path 
 
   while get_free() < FREE_TARGET_GB and len(dirs) > 0:
     print 'Free space (GB): %s < Target (GB): %s ' % (get_free(), FREE_TARGET_GB)
@@ -53,12 +48,10 @@ while True:
     print 'Removing:', path
     status, output = commands.getstatusoutput('cd %s && vagrant destroy -f' % path)
     print 'Vagrant: ', output
-    try:
-      shutil.rmtree(path, onerror=onerror)
-    except OSError as e:
-      print "ERROR: Unable to perform removal: %s Check path permissions" % path 
+    shutil.rmtree(path, onerror=onerror)
 
   stdout.flush()
 
   # Run at most once every 3H
   time.sleep(10800)
+
