@@ -37,6 +37,10 @@ while True:
     stats = os.statvfs(ROOT_DIR)
     return stats.f_bavail * stats.f_bsize / pow(1024,3)
 
+  #The callback executed when shutil methods fail to run successfully
+  def onerror(func, path, exc_info):
+    print "ERROR: Cannot remove '%s' Check path permissions" % path 
+
   while get_free() < FREE_TARGET_GB and len(dirs) > 0:
     print 'Free space (GB): %s < Target (GB): %s ' % (get_free(), FREE_TARGET_GB)
     path = dirs[0][0]
@@ -44,9 +48,10 @@ while True:
     print 'Removing:', path
     status, output = commands.getstatusoutput('cd %s && vagrant destroy -f' % path)
     print 'Vagrant: ', output
-    shutil.rmtree(path)
+    shutil.rmtree(path, onerror=onerror)
 
   stdout.flush()
 
   # Run at most once every 3H
   time.sleep(10800)
+
