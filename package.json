@@ -22,7 +22,7 @@
     "moment": ">=1.6.2",
     "validator": ">=0.4.2",
     "winston": ">=0.5.11",
-    "nodemailer": ">=0.3.20",
+    "nodemailer": "0.7.1",
     "nomnom": "1.6.x",
     "strider-extension-loader": "~0.2.3",
     "everypaas": "0.0.x",
